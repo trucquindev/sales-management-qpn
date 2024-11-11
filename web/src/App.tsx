@@ -11,7 +11,7 @@ import { Outlet } from 'react-router-dom';
 
 export default function Layout() {
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen w-screen max-w-screen-2xl mx-auto">
       <Outlet />
     </div>
   );
