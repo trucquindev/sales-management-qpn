@@ -1,11 +1,18 @@
-import { Button } from '@/components/ui/button';
-function App() {
+import { Outlet } from 'react-router-dom';
+// const queryClient = new QueryClient({
+//   defaultOptions: {
+//     queries: {
+//       refetchIntervalInBackground: false,
+//       refetchOnWindowFocus: false,
+//       retry: false,
+//     },
+//   },
+// });
+
+export default function Layout() {
   return (
-    <>
-      <p className="text-red-500">hello world</p>
-      <Button>Click me</Button>{' '}
-    </>
+    <div className="flex h-screen">
+      <Outlet />
+    </div>
   );
 }
-
-export default App;
