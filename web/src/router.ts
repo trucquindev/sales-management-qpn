@@ -9,6 +9,7 @@ export type Path =
   | `/blog`
   | `/blog/:blogId`
   | `/shop`
+  | `/wishlist`
 
 export type Params = {
   '/blog/:blogId': { blogId: string }

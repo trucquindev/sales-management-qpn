@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Header from '../components/header/Header';
+import Footers from '@/components/footer/Footer';
 
 // const queryClient = new QueryClient({
 //   defaultOptions: {
@@ -16,6 +17,7 @@ export default function Layout() {
     <div className="w-screen mx-auto">
       <Header />
       <Outlet />
+      <Footers />
     </div>
   );
 }
