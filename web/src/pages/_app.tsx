@@ -12,7 +12,7 @@ import Header from '../components/header/Header';
 
 export default function Layout() {
   return (
-    <div className=" m-w-2xl mx-auto">
+    <div className="w-screen mx-auto">
       <Header />
       <Outlet />
     </div>
