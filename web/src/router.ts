@@ -9,6 +9,8 @@ export type Path =
   | `/blog`
   | `/blog/:blogId`
   | `/shop`
+  | `/shopping-cart`
+  | `/shopping-cart/checkout`
   | `/wishlist`
 
 export type Params = {
