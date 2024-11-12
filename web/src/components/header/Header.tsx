@@ -1,5 +1,12 @@
 import { Link } from 'react-router-dom';
-import { MapPin, Heart, ShoppingCart, ChevronDown, Phone } from 'lucide-react';
+import {
+  MapPin,
+  Heart,
+  ShoppingCart,
+  ChevronDown,
+  Phone,
+  X,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -8,8 +15,52 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { useState } from 'react';
+import image2 from '@/assets/images/imageProducts/image-2.png';
+import image1 from '@/assets/images/imageProducts/image-1.png';
+interface CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  weight: string;
+  image: string;
+}
 
 export default function Component() {
+  const [cartItems, setCartItems] = useState<CartItem[]>([
+    {
+      id: '1',
+      name: 'Fresh Indian Orange',
+      price: 12.0,
+      quantity: 1,
+      weight: '1 kg',
+      image: image2,
+    },
+    {
+      id: '2',
+      name: 'Green Apple',
+      price: 14.0,
+      quantity: 1,
+      weight: '1 kg',
+      image: image1,
+    },
+  ]);
+  const total = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
+  const removeFromCart = (id: string) => {
+    setCartItems(cartItems.filter((item) => item.id !== id));
+  };
   return (
     <header className="w-full flex flex-col items-center border">
       {/* Top bar */}
@@ -79,12 +130,56 @@ export default function Component() {
               </p>
             </Button>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className="h-6 w-6" />
-                <p className="w-3 h-3 flex justify-center items-center rounded-full bg-primary text-[8px] absolute top-1 right-0">
-                  2
-                </p>
-              </Button>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative">
+                    <ShoppingCart className="h-5 w-5" />
+                    <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-green-600 text-xs text-white flex items-center justify-center">
+                      {cartItems.length}
+                    </span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Shopping Cart ({cartItems.length})</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-8 flex flex-col gap-4">
+                    {cartItems.map((item) => (
+                      <div key={item.id} className="flex items-center gap-4">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          width={60}
+                          height={60}
+                          className="rounded-md"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-medium">{item.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {item.weight} × ${item.price.toFixed(2)}
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeFromCart(item.id)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    <div className="mt-4 space-y-4">
+                      <div className="flex justify-between">
+                        <span>Total</span>
+                        <span className="font-medium">${total.toFixed(2)}</span>
+                      </div>
+                      <Button className="w-full bg-green-600 hover:bg-green-700">
+                        Checkout
+                      </Button>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
               <div className="flex flex-col">
                 <span className="text-xs text-muted-foreground">
                   Shopping cart:
