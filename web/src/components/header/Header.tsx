@@ -123,12 +123,58 @@ export default function Component() {
           </div>
 
           <div className="flex items-center">
-            <Button variant="ghost" size="icon" className="relative">
-              <Heart className="h-6 w-6" />
-              <p className="w-3 h-3 flex justify-center items-center rounded-full bg-primary text-[8px] absolute top-1 right-0">
-                2
-              </p>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative">
+                    <Heart className="h-5 w-5" />
+                    <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-green-600 text-xs text-white flex items-center justify-center">
+                      {cartItems.length}
+                    </span>
+                  </Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>Shopping Cart ({cartItems.length})</SheetTitle>
+                  </SheetHeader>
+                  <div className="mt-8 flex flex-col gap-4">
+                    {cartItems.map((item) => (
+                      <div key={item.id} className="flex items-center gap-4">
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          width={60}
+                          height={60}
+                          className="rounded-md"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-medium">{item.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {item.weight} × ${item.price.toFixed(2)}
+                          </p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => removeFromCart(item.id)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                    <div className="mt-4 space-y-4">
+                      <div className="flex justify-between">
+                        <span>Total</span>
+                        <span className="font-medium">${total.toFixed(2)}</span>
+                      </div>
+                      <Button className="w-full bg-green-600 hover:bg-green-700">
+                        Checkout
+                      </Button>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
             <div className="flex items-center gap-2">
               <Sheet>
                 <SheetTrigger asChild>

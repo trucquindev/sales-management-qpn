@@ -9,12 +9,14 @@ export type Path =
   | `/blog`
   | `/blog/:blogId`
   | `/shop`
+  | `/shop/products/:productId`
   | `/shopping-cart`
   | `/shopping-cart/checkout`
   | `/wishlist`
 
 export type Params = {
   '/blog/:blogId': { blogId: string }
+  '/shop/products/:productId': { productId: string }
 }
 
 export type ModalPath = never

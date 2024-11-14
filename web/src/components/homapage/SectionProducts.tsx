@@ -80,38 +80,40 @@ const SectionProducts = () => {
     ));
   };
   return (
-    <section className="py-12 bg-gray-50">
-      <div className="container mx-auto">
-        <h2 className="text-2xl font-semibold mb-6">Popular Products</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {products.map((product) => (
-            <Card key={product.name} className="overflow-hidden">
-              <CardContent className="p-4">
-                <div className="relative h-40 mb-4">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="object-cover rounded-md"
-                  />
-                </div>
-                <h3 className="font-medium mb-2">{product.name}</h3>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-green-600 font-bold">
-                      ${product.price}
-                    </span>
-                    <div className="flex ">{fillStar(product.star!)}</div>
+    <div className='relative'>
+      <section className="py-12 bg-gray-50">
+        <div className="container mx-auto">
+          <h2 className="text-2xl font-semibold mb-6">Popular Products</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {products.map((product) => (
+              <Card key={product.name} className="overflow-hidden hover:scale-105 hover:shadow-2xl">
+                <CardContent className="p-4">
+                  <div className="relative h-40 mb-4 flex items-center justify-center">
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="object-cover rounded-md"
+                    />
                   </div>
-                  <Button variant="outline" size="sm">
-                    <ShoppingBasket className="w-4 h-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <h3 className="font-medium mb-2">{product.name}</h3>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-green-600 font-bold">
+                        ${product.price}
+                      </span>
+                      <div className="flex ">{fillStar(product.star!)}</div>
+                    </div>
+                    <Button variant="outline" size="sm">
+                      <ShoppingBasket className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 };
 
