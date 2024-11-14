@@ -25,7 +25,7 @@ import LadiesFinger from '@/assets/ladies-finger.png';
 import LadiesFinger1 from '@/assets/ladies-finger-1.png';
 import RedChilli from '@/assets/red-chili.png';
 import RedTomato from '@/assets/red-tomato.png';
-
+import { useNavigate } from 'react-router-dom';
 
 export default function Shop() {
   const products = [
@@ -135,7 +135,7 @@ export default function Shop() {
       image: RedTomato,
     },
   ];
-
+  const navigate = useNavigate()
   return (
     <div className="max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 p-4 md:p-6">
       {/* Sidebar */}
@@ -212,7 +212,7 @@ export default function Shop() {
       <div className="md:col-span-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <Card key={product.id} className="group">
+            <Card key={product.id} className="group" onClick={() => navigate('/shop/products/123')}>
               <CardContent className="p-4">
                 <div className="aspect-square relative mb-4">
                   <img

@@ -17,12 +17,14 @@ import {
 import { Input } from '@/components/ui/input';
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { useState } from 'react';
+import { useNavigate } from'react-router-dom';
 import image2 from '@/assets/images/imageProducts/image-2.png';
 import image1 from '@/assets/images/imageProducts/image-1.png';
 interface CartItem {
@@ -61,6 +63,7 @@ export default function Component() {
   const removeFromCart = (id: string) => {
     setCartItems(cartItems.filter((item) => item.id !== id));
   };
+  const navigate = useNavigate();
   return (
     <header className="w-full flex flex-col items-center border">
       {/* Top bar */}
@@ -127,7 +130,7 @@ export default function Component() {
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative">
-                    <Heart className="h-5 w-5" />
+                    <Heart className="h-5 w-5"/>
                     <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-green-600 text-xs text-white flex items-center justify-center">
                       {cartItems.length}
                     </span>
@@ -135,7 +138,7 @@ export default function Component() {
                 </SheetTrigger>
                 <SheetContent>
                   <SheetHeader>
-                    <SheetTitle>Shopping Cart ({cartItems.length})</SheetTitle>
+                    <SheetTitle>My wishlist ({cartItems.length})</SheetTitle>
                   </SheetHeader>
                   <div className="mt-8 flex flex-col gap-4">
                     {cartItems.map((item) => (
@@ -167,9 +170,11 @@ export default function Component() {
                         <span>Total</span>
                         <span className="font-medium">${total.toFixed(2)}</span>
                       </div>
-                      <Button className="w-full bg-green-600 hover:bg-green-700">
-                        Checkout
-                      </Button>
+                      <SheetClose asChild>
+                        <Button className="w-full bg-green-600 hover:bg-green-700" type="submit" onClick={()=>navigate('/wishlist')}>
+                          Go to my wishlist
+                        </Button>
+                      </SheetClose>
                     </div>
                   </div>
                 </SheetContent>
@@ -219,9 +224,11 @@ export default function Component() {
                         <span>Total</span>
                         <span className="font-medium">${total.toFixed(2)}</span>
                       </div>
-                      <Button className="w-full bg-green-600 hover:bg-green-700">
-                        Checkout
-                      </Button>
+                      <SheetClose asChild>
+                        <Button className="w-full bg-green-600 hover:bg-green-700" type="submit" onClick={()=>navigate('/shopping-cart')}>
+                          Shopping Cart
+                        </Button>
+                      </SheetClose>
                     </div>
                   </div>
                 </SheetContent>
@@ -258,14 +265,7 @@ export default function Component() {
                   Shop
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/pages"
-                  className="flex items-center gap-1 hover:text-green-500"
-                >
-                  Pages
-                </Link>
-              </li>
+              
               <li>
                 <Link
                   to="/blog"
