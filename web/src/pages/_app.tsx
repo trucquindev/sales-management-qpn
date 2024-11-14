@@ -14,7 +14,7 @@ import Footers from '@/components/footer/Footer';
 
 export default function Layout() {
   return (
-    <div className="w-screen mx-auto">
+    <div className="mx-auto">
       <Header />
       <Outlet />
       <Footers />
