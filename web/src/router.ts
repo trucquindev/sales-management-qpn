@@ -8,6 +8,7 @@ export type Path =
   | `/about`
   | `/blog`
   | `/blog/:blogId`
+  | `/contact`
   | `/shop`
   | `/shopping-cart`
   | `/shopping-cart/checkout`
