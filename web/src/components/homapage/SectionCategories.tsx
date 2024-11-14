@@ -35,7 +35,7 @@ const SectionCategories = () => {
             {categories.map((category) => (
               <Card
                 key={category.name}
-                className="border-none gap-4 shadow-none"
+                className="border-none gap-4 shadow-none hover:scale-105 hover:shadow-2xl"
               >
                 <CardContent className="flex flex-col items-center p-4">
                   <div className="w-40 h-40 rounded-lg bg-white shadow-md flex items-center justify-center mb-2">

@@ -25,7 +25,7 @@ const SectionCustomers = () => {
         <h2 className="text-2xl font-semibold mb-6">Client Testimonials</h2>
         <div className="grid md:grid-cols-3 gap-6">
           {testimonials.map((testimonial) => (
-            <Card key={testimonial.name}>
+            <Card key={testimonial.name} className='hover:scale-105 hover:shadow-2xl'>
               <CardContent className="p-6">
                 <p className="text-muted-foreground mb-4">{testimonial.text}</p>
                 <div className="flex justify-between items-center gap-4">
