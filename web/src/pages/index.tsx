@@ -22,7 +22,6 @@ import image12 from '@/assets/images/imageProducts/image-3.png';
 import image13 from '@/assets/images/imageProducts/image-4.png';
 import image14 from '@/assets/images/imageProducts/image-5.png';
 import image15 from '@/assets/images/imageProducts/image-6.png';
-import Footers from '@/components/footer/Footer';
 const brands = [
   { name: 'Steps', image: image4 },
   { name: 'Mango', image: image5 },
@@ -170,7 +169,6 @@ export default function Component() {
           </div>
         </div>
       </div>
-      <Footers />
     </div>
   );
 }
