@@ -27,7 +27,7 @@ export default function Component() {
                     </Link>
                     <MdChevronRight className="text-gray-400" />
                     <Link className="text-green-500" to="#">
-                        Login
+                        Create Account
                     </Link>
                 </div>
             </div>
@@ -37,7 +37,7 @@ export default function Component() {
                 <div className="mx-auto mt-4 max-w-md">
                     <Card className="border border-gray-200 shadow-lg">
                         <CardHeader>
-                            <CardTitle className="text-center text-2xl font-semibold">Sign In</CardTitle>
+                            <CardTitle className="text-center text-2xl font-semibold">Create Account</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form className="space-y-4">
@@ -47,24 +47,25 @@ export default function Component() {
                                 <div className="space-y-2">
                                     <Input placeholder="Password" type="password" />
                                 </div>
+                                <div className="space-y-2">
+                                    <Input placeholder="Confirm Password" type="password" />
+                                </div>
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center space-x-2">
                                         <Checkbox id="remember" />
                                         <label className="text-sm text-gray-600" htmlFor="remember">
-                                            Remember me
+                                            Accept all terms & Conditions
                                         </label>
                                     </div>
-                                    <Link className="text-sm text-gray-500 hover:underline" to="#">
-                                        Forgot Password?
-                                    </Link>
+
                                 </div>
                                 <Button className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 rounded-md" type="submit">
-                                    Login
+                                    Create Account
                                 </Button>
                                 <div className="text-center text-sm text-gray-600">
-                                    {"Don't have an account? "}
-                                    <Link className="text-green-500 hover:underline" to="/register">
-                                        Register
+                                    {"Already have account? "}
+                                    <Link className="text-green-500 hover:underline" to="/login">
+                                        Login
                                     </Link>
                                 </div>
                             </form>

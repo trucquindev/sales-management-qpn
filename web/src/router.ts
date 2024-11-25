@@ -4,7 +4,12 @@
 import { components, hooks, utils } from '@generouted/react-router/client'
 
 export type Path =
+  | `/dashboard`
   | `/login`
+  | `/orderdetail`
+  | `/orderhistory`
+  | `/register`
+  | `/settings`
   | `/shop`
 
 export type Params = {

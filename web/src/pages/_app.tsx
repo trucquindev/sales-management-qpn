@@ -1,4 +1,6 @@
 import { Outlet } from 'react-router-dom';
+import Header from '../components/header/Header';
+
 // const queryClient = new QueryClient({
 //   defaultOptions: {
 //     queries: {
@@ -11,7 +13,8 @@ import { Outlet } from 'react-router-dom';
 
 export default function Layout() {
   return (
-    <div className="min-h-screen w-screen">
+    <div className=" m-w-2xl mx-auto">
+
       <Outlet />
     </div>
   );
