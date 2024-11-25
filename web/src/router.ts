@@ -9,6 +9,12 @@ export type Path =
   | `/blog`
   | `/blog/:blogId`
   | `/contact`
+  | `/dashboard`
+  | `/login`
+  | `/orderdetail`
+  | `/orderhistory`
+  | `/register`
+  | `/settings`
   | `/shop`
   | `/shop/products/:productId`
   | `/shopping-cart`
