@@ -31,20 +31,20 @@ export default function Component() {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="firstName">First Name</Label>
-                                    <Input id="firstName" placeholder="Dianne" />
+                                    <Input id="firstName"  />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="lastName">Last Name</Label>
-                                    <Input id="lastName" placeholder="Russell" />
+                                    <Input id="lastName" />
                                 </div>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="email">Email</Label>
-                                <Input id="email" type="email" placeholder="dianne.russell@gmail.com" />
+                                <Input id="email" type="email"  />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="phone">Phone Number</Label>
-                                <Input id="phone" type="tel" placeholder="(603) 555-0123" />
+                                <Input id="phone" type="tel"  />
                             </div>
                             <Button className="bg-green-500 hover:bg-green-600">Save Changes</Button>
                         </div>
@@ -87,20 +87,20 @@ export default function Component() {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="billingFirstName">First Name</Label>
-                                <Input id="billingFirstName" placeholder="Dianne" />
+                                <Input id="billingFirstName"  />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="billingLastName">Last Name</Label>
-                                <Input id="billingLastName" placeholder="Russell" />
+                                <Input id="billingLastName"  />
                             </div>
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="companyName">Company Name (Optional)</Label>
-                            <Input id="companyName" placeholder="UNKNOWN" />
+                            <Input id="companyName"  />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="streetAddress">Street Address</Label>
-                            <Input id="streetAddress" placeholder="4140 Parker Rd." />
+                            <Input id="streetAddress"  />
                         </div>
                         <div className="grid grid-cols-3 gap-4">
                             <div className="space-y-2">
@@ -131,17 +131,17 @@ export default function Component() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="zipCode">Zip Code</Label>
-                                <Input id="zipCode" placeholder="20033" />
+                                <Input id="zipCode" />
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="billingEmail">Email</Label>
-                                <Input id="billingEmail" type="email" placeholder="dianne.russell@gmail.com" />
+                                <Input id="billingEmail" type="email" />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="billingPhone">Phone</Label>
-                                <Input id="billingPhone" type="tel" placeholder="(603) 555-0123" />
+                                <Input id="billingPhone" type="tel" placeholder="+84" />
                             </div>
                         </div>
                         <div className="flex justify-center mt-4">

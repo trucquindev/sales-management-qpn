@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
-export default function Dashboard() {
+export default function Component() {
     return (
         <div className="container mx-auto max-w-[1400px] p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

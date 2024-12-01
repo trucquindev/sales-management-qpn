@@ -27,6 +27,7 @@ import { useState } from 'react';
 import { useNavigate } from'react-router-dom';
 import image2 from '@/assets/images/imageProducts/image-2.png';
 import image1 from '@/assets/images/imageProducts/image-1.png';
+
 interface CartItem {
   id: string;
   name: string;
