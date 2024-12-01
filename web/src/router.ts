@@ -10,15 +10,15 @@ export type Path =
   | `/blog/:blogId`
   | `/contact`
   | `/dashboard`
-  | `/login`
   | `/orderdetail`
   | `/orderhistory`
-  | `/register`
   | `/settings`
   | `/shop`
   | `/shop/products/:productId`
   | `/shopping-cart`
   | `/shopping-cart/checkout`
+  | `/sign-in`
+  | `/sign-up`
   | `/wishlist`
 
 export type Params = {
