@@ -2,7 +2,7 @@ import { X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
-import { getAllWishlistByUserIdAPI } from '@/apis';
+import { getAllWishlistByUserIdAPI, deleteWishlistAPI } from '@/apis';
 import * as xmljs from 'xml-js';
 interface WishList {
   id?: string;
@@ -29,6 +29,7 @@ export default function Component() {
         name: wishlist.name._text,
         image: wishlist.image._text,
         price: wishlist.price._text,
+        productId: wishlist.productId._text,
         id: wishlist.id._text,
         stockstt: wishlist.stockstt._text === 'true',
         userId: wishlist.userId._text,
@@ -42,7 +43,11 @@ export default function Component() {
   useEffect(() => {
     fetchDataWishList();
   }, []);
-  console.log(dataWishList);
+  const handleRemoveItemWishlist = async (id: any) => {
+    const initData = `<item><id>${id}</id></item>`;
+    await deleteWishlistAPI(initData);
+    fetchDataWishList();
+  };
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold text-center mb-8">My Wishlist</h1>
@@ -110,7 +115,13 @@ export default function Component() {
                       </Button>
                     </td>
                     <td className="p-4 align-middle">
-                      <Button variant="ghost" size="icon">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() =>
+                          handleRemoveItemWishlist(product.productId)
+                        }
+                      >
                         <X className="h-4 w-4" />
                       </Button>
                     </td>
