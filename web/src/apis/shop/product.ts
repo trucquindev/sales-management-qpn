@@ -11,14 +11,24 @@ export const getAllCategoryAPI = async () => {
 };
 
 export const postShoppingCard = async (
-  customerId: string,
-  productId: string
+  xmlData: any,
 ) => {
-  const response = await authorizedAxiosInstance.post('/api/ShoppingCard', {
-    customerId,
-    productId,
-  });
-  return response.data;
+
+  try {
+    // Gửi dữ liệu dưới dạng XML qua request POST
+    const response = await authorizedAxiosInstance.post(
+      '/shopping-cart',
+      xmlData,
+      {
+        headers: {
+          'Content-Type': 'application/xml', // Xác định kiểu nội dung là XML
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    return error;
+  }
 };
 export const getShoppingCardCustomer = async (customerId: string) => {
   const response = await authorizedAxiosInstance.get(

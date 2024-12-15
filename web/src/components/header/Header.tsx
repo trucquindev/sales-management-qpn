@@ -286,7 +286,7 @@ export default function Component() {
               </Sheet>
             </div>
             <div className="flex items-center gap-2">
-              {isAuthenticated && (
+              {(
                 <Sheet>
                   <SheetTrigger asChild>
                     <Button variant="ghost" size="icon" className="relative">

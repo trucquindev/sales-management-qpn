@@ -18,9 +18,9 @@ import {
 } from '@/apis/shop/product';
 import { useEffect, useState } from 'react';
 import { getAllWishlistByUserIdAPI, postWishlistAPI } from '@/apis';
-import xmljs from 'xml-js';
 import { toast } from 'react-toastify';
 import * as xmljs from 'xml-js';
+import { js2xml } from 'xml-js';
 
 interface Product {
   id: string;
@@ -57,9 +57,7 @@ export default function Shop() {
       const response = await getAllWishlistByUserIdAPI(userId);
       const xmlData = response.data; // response.data là chuỗi XML
       console.log('🚀 ~ fetchData ~ xmlData:', xmlData);
-      // console.log('🚀 ~ raw XML data:', xmlData);
-
-      // Chuyển đổi XML sang JSON
+      
       const jsonData = xmljs.xml2js(xmlData, { compact: true });
       console.log('🚀 ~ fetchData ~ jsonData:', jsonData);
     } catch (error) {
@@ -80,7 +78,6 @@ export default function Shop() {
       const xmlData = responseProduct.data;
 
       const jsonData = xmljs.xml2js(xmlData, { compact: true });
-
 
       const transformData = (data) => {
         return data.map((item) => ({
@@ -105,9 +102,29 @@ export default function Shop() {
     fetchData();
   }, []);
 
-  const handleClickAddCart = async (id: string) => {
-    await postShoppingCard('674c1749f333612d17d206fe', id);
-  };
+ const handleClickAddCart = async (id: string) => {
+   const productId = id;
+   const customerId = '674c1749f333612d17d206fe'; // Lấy từ thông tin đăng nhập người dùng
+
+   const jsonData = {
+     Cart: {
+       Product: {
+         ProductId: productId.toString(),
+       },
+       Customer: {
+         CustomerId: customerId.toString(),
+       },
+     },
+   };
+
+   const xmlOptions = { compact: true, ignoreComment: true, spaces: 2 };
+   const xmlData = js2xml(jsonData, xmlOptions);
+
+   console.log('Generated XML:', xmlData); // Kiểm tra XML được tạo
+
+   // Gửi dữ liệu XML tới API
+   await postShoppingCard(xmlData);
+ };
 
   const handleClickAddCartToWishlist = async (product: Product) => {
     const userId = '67433030077b3eb2ae98bcad';
