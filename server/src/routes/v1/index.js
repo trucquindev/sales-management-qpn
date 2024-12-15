@@ -10,6 +10,7 @@ const Router = express.Router();
 Router.get('/status', (req, res) => {
   res.status(StatusCodes.OK).json({ massage: 'Apis v1 are ready to use' });
 });
+Router.use('/user', userRouter);
 Router.use('/category', categoryRoute);
 Router.use('/wishlist', wishlistRoute);
 Router.use('/user', userRouter);

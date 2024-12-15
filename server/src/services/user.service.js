@@ -10,10 +10,10 @@ const { StatusCodes } = require('http-status-codes');
 const { pickUser } = require('~/utils/formatter');
 
 async function registerUser(data) {
-  const { username, password, email } = data;
+  const { name, password, email } = data;
 
   // Kiểm tra user đã tồn tại
-  const existingUser = await findUserByUsername(username);
+  const existingUser = await findUserByUsername(name);
   if (existingUser) throw new Error('Username already exists.');
 
   // Hash password
@@ -21,7 +21,7 @@ async function registerUser(data) {
 
   // Lưu user mới vào database
   const newUser = {
-    username,
+    name,
     password: hashedPassword,
     email,
     createdAt: new Date(),

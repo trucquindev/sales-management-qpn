@@ -30,50 +30,38 @@ const initialState: UserState = {
 // 4. Create thunks (async actions) for login, registration, forgot password, get user ID, and update password  
 
 // Login  
-export const loginUserAPI = createAsyncThunk<
-  User, // Return type  
-  { email: string; password: string }, // Input type  
-  { rejectValue: string } // Error return type  
->(
-  'user/loginUserAPI',
-  async (data, { rejectWithValue }) => {
-    try {
-      const response = await authorizedAxiosInstance.post('/api/Customer/login', data);
-      if (response.data && response.data.id && response.data.name) {
-        return response.data;
-      } else {
-        return rejectWithValue('Invalid response from server');
-      }
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || error.message || 'Something went wrong';
-      return rejectWithValue(errorMessage);
-    }
-  }
-);
+export const loginUserAPI = createAsyncThunk<  
+  User,  
+  { username: string; password: string },  
+  { rejectValue: string }  
+>(  
+  'user/loginUserAPI',  
+  async (data, { rejectWithValue }) => {  
+    try {  
+      const response = await authorizedAxiosInstance.post('/user/signin', data);  
+      return response.data.user; // Giả sử server trả về trường `user` trong response  
+    } catch (error: any) {  
+      return rejectWithValue(error.response?.data?.error || 'Something went wrong');  
+    }  
+  }  
+); 
 
 // Register  
-export const registerUserAPI = createAsyncThunk<
-  User,
-  { email: string; password: string; name: string },
-  { rejectValue: string }
->(
-  'user/registerUserAPI',
-  async (data, { rejectWithValue }) => {
-    try {
-      const response = await authorizedAxiosInstance.post('/api/Customer', data);
-      if (response.data && response.data.id && response.data.name) {
-        return response.data;
-      } else {
-        return rejectWithValue('Invalid response from server');
-      }
-    } catch (error: any) {
-      const errorMessage =
-        error.response?.data?.message || error.message || 'Something went wrong';
-      return rejectWithValue(errorMessage);
-    }
-  }
-);
+export const registerUserAPI = createAsyncThunk<  
+  User,  
+  { email: string; password: string; name: string },  
+  { rejectValue: string }  
+>(  
+  'user/registerUserAPI',  
+  async (data, { rejectWithValue }) => {  
+    try {  
+      const response = await authorizedAxiosInstance.post('/user/signup', data);  
+      return response.data.user; // Giả sử server trả về trường `user` trong response  
+    } catch (error: any) {  
+      return rejectWithValue(error.response?.data?.error || 'Something went wrong');  
+    }  
+  }  
+);  
 
 // Get User ID by Email  
 export const getUserIdByEmailAPI = createAsyncThunk<
