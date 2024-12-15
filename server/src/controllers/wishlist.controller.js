@@ -19,7 +19,7 @@ async function getAllWishlistController(req, res) {
     const { userId } = req.params;
     const data = await getAllWishlistService(userId);
     res.set('Content-Type', 'application/xml');
-    res.status(200).json({ message: 'Get data categories thành công.', data });
+    res.status(200).json({ message: 'Get data thành công.', data });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
