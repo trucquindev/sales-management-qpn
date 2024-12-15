@@ -34,6 +34,16 @@ async function getAllWishlist(userId) {
 
   return xmlData;
 }
+async function createNew(data) {
+  const db = GET_DB();
+  const dataInsert = {
+    ...data,
+    userId: new ObjectId(data.userId),
+    productId: new ObjectId(data.productId),
+  };
+  return await db.collection(USER_COLLECTION).insertOne(dataInsert);
+}
 module.exports = {
   getAllWishlist,
+  createNew,
 };

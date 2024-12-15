@@ -10,10 +10,12 @@ import cors from 'cors';
 import { APIs_V1 } from './routes/v1';
 
 const START_SERVER = () => {
+  // Middleware xử lý XML
+  const xmlParser = bodyParser.text({ type: 'application/xml' });
   const app = express();
   app.use(cors());
   // Cấu hình middleware
-  app.use(bodyParser.json());
+  app.use(xmlParser);
   app.use(bodyParser.urlencoded({ extended: false }));
   // app.use(express.json());
   // app.use(express.urlencoded({ extended: true }));
