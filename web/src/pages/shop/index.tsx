@@ -80,8 +80,8 @@ export default function Shop() {
           id: item.id._text,
           image: item.image._text,
           name: item.name._text,
-          price: parseFloat(item.price._text),
-          star: parseInt(item.star._text, 10),
+          price: Number.parseFloat(item.price._text),
+          star: Number.parseInt(item.star._text, 10),
         }));
       };
       const result = transformData(jsonData.result.item);
