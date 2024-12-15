@@ -141,7 +141,6 @@ export default function Shop() {
       quantity: '1',
       unit: '1kg',
     };
-    console.log(dataWishList);
 
     const check = dataWishList.find((data) => data.name === initData.name);
     if (check) {
@@ -149,7 +148,6 @@ export default function Shop() {
     } else {
       // Tạo đối tượng j2xParser
       const xmlData = `${jsonToXml(initData)}`;
-      console.log('hello', typeof xmlData);
       await postWishlistAPI(xmlData);
       toast.success('Thêm thành công vào danh sách yêu thích');
     }
