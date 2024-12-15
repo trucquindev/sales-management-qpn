@@ -18,6 +18,7 @@ import {
 } from '@/apis/shop/product';
 import { useEffect, useState } from 'react';
 import { getAllWishlistByUserIdAPI, postWishlistAPI } from '@/apis';
+import xmljs from 'xml-js';
 import { toast } from 'react-toastify';
 import * as xmljs from 'xml-js';
 
@@ -68,20 +69,40 @@ export default function Shop() {
   useEffect(() => {
     fetchDataWishList();
   }, [isClick]);
-  // const fetchData = async () => {
-  //   try {
-  //     const responseCategory = await getAllCategoryAPI();
-  //     setIsCategory(responseCategory);
 
-  //     const responseProduct = await getAllProductAPI();
-  //     setIsProduct(responseProduct);
-  //   } catch (error) {
-  //     console.error('Error fetching data:', error);
-  //   }
-  // };
+  const fetchData = async () => {
+    try {
+      const responseCategory = await getAllCategoryAPI();
+      setIsCategory(responseCategory);
+
+      const responseProduct = await getAllProductAPI();
+
+      const xmlData = responseProduct.data;
+
+      const jsonData = xmljs.xml2js(xmlData, { compact: true });
+
+
+      const transformData = (data) => {
+        return data.map((item) => ({
+          id: item.id._text,
+          image: item.image._text,
+          name: item.name._text,
+          price: parseFloat(item.price._text),
+          star: parseInt(item.star._text, 10),
+        }));
+      };
+      const result = transformData(jsonData.result.item);
+
+      console.log('jsonData', result);
+
+      setIsProduct(result);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
   useEffect(() => {
-    // fetchData();
+    fetchData();
   }, []);
 
   const handleClickAddCart = async (id: string) => {
@@ -123,11 +144,11 @@ export default function Shop() {
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
-              {isCategory.map((category) => (
+              {/* {isCategory.map((category) => (
                 <SelectItem key={category.id} value={category.id.toString()}>
                   {category.name}
                 </SelectItem>
-              ))}
+              ))} */}
             </SelectContent>
           </Select>
         </div>

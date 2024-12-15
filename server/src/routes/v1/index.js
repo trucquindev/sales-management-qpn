@@ -4,6 +4,7 @@ import { userRouter } from './user.routes';
 import { cloudinaryRoute } from './cloudinaryRoute';
 import { categoryRoute } from './categories.routes';
 import { wishlistRoute } from './wishlist.routes';
+import { productsRoute } from './products.routes';
 const Router = express.Router();
 
 Router.get('/status', (req, res) => {
@@ -13,5 +14,6 @@ Router.use('/category', categoryRoute);
 Router.use('/wishlist', wishlistRoute);
 Router.use('/user', userRouter);
 Router.use('/cloudinary', cloudinaryRoute);
+Router.use('/products', productsRoute);
 
 export const APIs_V1 = Router;
