@@ -6,6 +6,7 @@ const {
 
 async function signUp(req, res) {
   try {
+    console.log('🚀 ~ signUp ~ req.body:', req.body);
     const user = await registerUser(req.body);
 
     res.status(201).json({ message: 'User registered successfully.', user });
