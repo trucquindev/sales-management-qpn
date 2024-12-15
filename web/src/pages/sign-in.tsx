@@ -21,13 +21,13 @@ export default function SignInComponent() {
   const isLoading = useSelector(selectUserLoading);  
   const error = useSelector(selectUserError);  
 
-  const data = {  
-    username: valueEmail, // Giả sử bạn dùng trường username thay cho email  
-    password: valuePassword,  
-  };  
-
+ 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {  
     e.preventDefault();  
+     const data = {
+       email: valueEmail, // Giả sử bạn dùng trường username thay cho email
+       password: valuePassword,
+     };  
 
     try {  
       const resultAction = await dispatch(loginUserAPI(data));  
@@ -67,7 +67,7 @@ export default function SignInComponent() {
               <form className="space-y-4" onSubmit={handleSubmit}>  
                 <div className="space-y-2">  
                   <Input  
-                    placeholder="Username"  // Thay đổi placeholder thành Username  
+                    placeholder="Email"  // Thay đổi placeholder thành Username  
                     type="text"  
                     value={valueEmail}  
                     onChange={(e) => setValueEmail(e.target.value)}  

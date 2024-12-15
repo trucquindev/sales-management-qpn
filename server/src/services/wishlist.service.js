@@ -1,4 +1,8 @@
-const { getAllWishlist, createNew } = require('../models/wishlist.model');
+const {
+  getAllWishlist,
+  createNew,
+  deleteWishlist,
+} = require('../models/wishlist.model');
 const { default: ApiError } = require('~/utils/ApiError');
 const { StatusCodes } = require('http-status-codes');
 
@@ -18,4 +22,16 @@ async function createNewService(data) {
     throw new ApiError(StatusCodes.OK, 'Add wishlist item failed');
   }
 }
-module.exports = { getAllWishlistService, createNewService };
+async function deleteWishlistService(id) {
+  try {
+    const result = await deleteWishlist(id);
+    return result;
+  } catch (error) {
+    throw new ApiError(StatusCodes.OK, 'Add wishlist item failed');
+  }
+}
+module.exports = {
+  getAllWishlistService,
+  createNewService,
+  deleteWishlistService,
+};

@@ -2,12 +2,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { getAllCategoryAPI } from '@/apis';
 import * as xmljs from 'xml-js';
+import { useNavigate } from 'react-router-dom';
 
 interface category {
   name: string;
   image: string;
 }
 const SectionCategories = () => {
+  const navigate = useNavigate();
   const [category, setCategory] = useState<category[]>([]);
   const fetchData = async () => {
     try {
@@ -41,6 +43,7 @@ const SectionCategories = () => {
           <div className="flex w-[90%] flex-wrap justify-center items-center">
             {category.map((category) => (
               <Card
+                onClick={() => navigate('/shop')}
                 key={category.name}
                 className="border-none gap-4 shadow-none hover:scale-105 hover:shadow-2xl"
               >

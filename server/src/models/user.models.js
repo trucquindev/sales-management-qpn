@@ -10,7 +10,7 @@ async function createUser(data) {
 
 async function findUserByUsername(username) {
   const db = GET_DB();
-  return await db.collection(USER_COLLECTION).findOne({ username });
+  return await db.collection(USER_COLLECTION).findOne({ email: username });
 }
 const findOneById = async (userId) => {
   try {

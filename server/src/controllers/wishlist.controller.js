@@ -1,6 +1,7 @@
 const {
   getAllWishlistService,
   createNewService,
+  deleteWishlistService,
 } = require('../services/wishlist.service');
 const xml2js = require('xml2js');
 // Hàm chuyển đổi XML thành JSON
@@ -18,7 +19,7 @@ async function getAllWishlistController(req, res) {
     const { userId } = req.params;
     const data = await getAllWishlistService(userId);
     res.set('Content-Type', 'application/xml');
-    res.status(200).json({ message: 'Get data categories thành công.', data });
+    res.status(200).json({ message: 'Get data thành công.', data });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -44,5 +45,24 @@ async function postNewWishlostController(req, res) {
     res.status(400).json({ error: error.message });
   }
 }
+async function deleteWishlistController(req, res) {
+  console.log('🚀 ~ deleteWishlistController ~ req:', req.body);
+  try {
+    // const { userId } = req.params;
 
-module.exports = { getAllWishlistController, postNewWishlostController };
+    const jsonData = await xmlToJson(req.body);
+    let id = jsonData.item.id[0];
+    console.log('🚀 ~ deleteWishlistController ~ id:', id);
+    const data = await deleteWishlistService(id);
+    res.set('Content-Type', 'application/xml');
+    res.status(200).json({ message: 'Xóa item thành công.', data });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+module.exports = {
+  getAllWishlistController,
+  postNewWishlostController,
+  deleteWishlistController,
+};

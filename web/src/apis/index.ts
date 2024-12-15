@@ -53,6 +53,15 @@ export const postWishlistAPI = async (data: any) => {
   );
   return response.data;
 };
+export const deleteWishlistAPI = async (id: any) => {
+  const response = await authorizedAxiosInstance.delete('/wishlist/delete', {
+    headers: {
+      'Content-Type': 'application/xml',
+    },
+    data: id, // Body của request sẽ nằm trong `data`
+  });
+  return response.data;
+};
 export const getAllCustomerAPI = async () => {
   const response = await authorizedAxiosInstance.get(`/api/Customer`);
   return response.data;

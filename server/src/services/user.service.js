@@ -11,9 +11,11 @@ const { pickUser } = require('~/utils/formatter');
 
 async function registerUser(data) {
   const { name, password, email } = data;
+  console.log('🚀 ~ registerUser ~ name:', name);
 
   // Kiểm tra user đã tồn tại
   const existingUser = await findUserByUsername(name);
+  console.log('🚀 ~ registerUser ~ existingUser:', existingUser);
   if (existingUser) throw new Error('Username already exists.');
 
   // Hash password
