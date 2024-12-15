@@ -1,7 +1,7 @@
 import axios from 'axios';
 // khởi tạo một đối tượng Axios mục đích để custom và cấu hình chung cho dự án
 const authorizedAxiosInstance = axios.create({
-  baseURL: 'http://localhost:5208',
+  baseURL: 'http://localhost:8017',
 });
 // thời gian chờ tối đa của 1 request : 10 phút
 authorizedAxiosInstance.defaults.timeout = 1000 * 60 * 10;
