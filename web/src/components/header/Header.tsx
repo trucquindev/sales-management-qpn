@@ -5,7 +5,7 @@ import {
   ShoppingCart,
   ChevronDown,
   Phone,
-  X
+  X,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,19 +26,27 @@ import {
 import { useEffect, useState } from 'react';
 // import image1 from '@/assets/images/imageProducts/image-1.png';
 import { getAllWishlistByUserIdAPI } from '@/apis';
-import { deleteShoppingCard, getShoppingCardCustomer } from '@/apis/shop/product';
+import {
+  deleteShoppingCard,
+  getShoppingCardCustomer,
+} from '@/apis/shop/product';
 // import image1 from '@/assets/images/imageProducts/image-3.png';
 import { useNavigate } from 'react-router-dom';
-import { selectIsAuthenticated, selectCurrentUser, logoutUser } from '@/redux/user/userSlice'; // Thêm các selector và action từ userSlice
+import {
+  selectIsAuthenticated,
+  selectCurrentUser,
+  logoutUser,
+} from '@/redux/user/userSlice'; // Thêm các selector và action từ userSlice
 import { useDispatch, useSelector } from 'react-redux';
+import * as xmljs from 'xml-js';
 interface CartIdemWishList {
   id: string;
   name: string;
-  price: number;
-  quantity: number;
+  price: string;
+  quantity: string;
   unit: string;
   userId: string;
-  stockstt: boolean;
+  stockstt: string;
   image: string;
 }
 interface Product {
@@ -63,7 +71,6 @@ interface CartItem {
   quantity: number;
 }
 
-
 export default function Component() {
   const [dataWishList, setDataWishList] = useState<CartIdemWishList[]>([]);
 
@@ -74,11 +81,26 @@ export default function Component() {
   );
 
   const userId = '67433030077b3eb2ae98bcad'; // replace with actual user ID
-  const fetchDataWishlist = async () => {
+  const fetchDataWishList = async () => {
     try {
       const response = await getAllWishlistByUserIdAPI(userId);
-      setDataWishList(response);
-      
+      const xmlData = response.data; // response.data là chuỗi XML
+      console.log('🚀 ~ fetchData ~ xmlData:', xmlData);
+      // console.log('🚀 ~ raw XML data:', xmlData);
+
+      // Chuyển đổi XML sang JSON
+      const jsonData = xmljs.xml2js(xmlData, { compact: true });
+      console.log('🚀 ~ fetchData ~ jsonData:', jsonData);
+
+      const wishlists = jsonData.result?.item.map((wishlist: any) => ({
+        name: wishlist.name._text,
+        image: wishlist.image._text,
+        price: wishlist.price._text,
+        id: wishlist.id._text,
+        stockstt: wishlist.stockstt._text === 'true',
+        userId: wishlist.userId._text,
+      }));
+      setDataWishList(wishlists);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -92,14 +114,16 @@ export default function Component() {
     fetchData();
   }, []);
 
-  const sumShoppingCard = cartItems ? cartItems.reduce((total, item) => {
-    return total + item.quantity;
-  }, 0) : 0;
+  const sumShoppingCard = cartItems
+    ? cartItems.reduce((total, item) => {
+        return total + item.quantity;
+      }, 0)
+    : 0;
   useEffect(() => {
-    fetchDataWishlist();
+    fetchDataWishList();
   }, []);
   const totalWishList = dataWishList.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + +item.price * +item.quantity,
     0
   );
   const removeFromCartShoping = async (id: string) => {
@@ -113,7 +137,7 @@ export default function Component() {
     setDataWishList(dataWishList.filter((item) => item.id !== id));
   };
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const handleLogout = () => {
     dispatch(logoutUser()); // Dispatch action Redux
     navigate('/sign-in'); // Điều hướng về trang đăng nhập
@@ -156,8 +180,11 @@ export default function Component() {
               {isAuthenticated ? (
                 <>
                   {/* Hiển thị email người dùng nếu đăng nhập thành công */}
-                  <span onClick={() => navigate('/dashboard')} className="hover:text-primary">
-                    {currentUser?.email || "User"}
+                  <span
+                    onClick={() => navigate('/dashboard')}
+                    className="hover:text-primary"
+                  >
+                    {currentUser?.email || 'User'}
                   </span>
                   <Button variant="ghost" size="sm" onClick={handleLogout}>
                     Logout
@@ -165,9 +192,13 @@ export default function Component() {
                 </>
               ) : (
                 <>
-                  <Link to="/sign-in" className="hover:text-primary">Sign In</Link>
+                  <Link to="/sign-in" className="hover:text-primary">
+                    Sign In
+                  </Link>
                   <span>/</span>
-                  <Link to="/sign-up" className="hover:text-primary">Sign Up</Link>
+                  <Link to="/sign-up" className="hover:text-primary">
+                    Sign Up
+                  </Link>
                 </>
               )}
             </div>
@@ -195,7 +226,7 @@ export default function Component() {
 
           <div className="flex items-center">
             <div className="flex items-center gap-2">
-             {isAuthenticated &&  <Sheet>
+              <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative">
                     <Heart className="h-5 w-5" />
@@ -204,7 +235,7 @@ export default function Component() {
                     </span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent className='overflow-y-auto'>
+                <SheetContent className="overflow-y-auto">
                   <SheetHeader>
                     <SheetTitle>My wishlist ({dataWishList.length})</SheetTitle>
                   </SheetHeader>
@@ -221,7 +252,7 @@ export default function Component() {
                         <div className="flex-1">
                           <h3 className="font-medium">{item.name}</h3>
                           <p className="text-sm text-muted-foreground">
-                            {item.unit} × ${item.price.toFixed(2)}
+                            {item.unit} × ${(+item.price).toFixed(2)}
                           </p>
                         </div>
                         <Button
@@ -236,7 +267,9 @@ export default function Component() {
                     <div className="mt-4 space-y-4">
                       <div className="flex justify-between">
                         <span>Total</span>
-                        <span className="font-medium">${totalWishList.toFixed(2)}</span>
+                        <span className="font-medium">
+                          ${totalWishList.toFixed(2)}
+                        </span>
                       </div>
                       <SheetClose asChild>
                         <Button
@@ -250,73 +283,78 @@ export default function Component() {
                     </div>
                   </div>
                 </SheetContent>
-              </Sheet>}
+              </Sheet>
             </div>
             <div className="flex items-center gap-2">
-              {isAuthenticated && <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="relative">
-                    <ShoppingCart className="h-5 w-5" />
-                    <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-green-600 text-xs text-white flex items-center justify-center">
-                      {sumShoppingCard}
-                    </span>
-                  </Button>
-                </SheetTrigger>
-                <SheetContent>
-                  <SheetHeader>
-                    <SheetTitle>
-                      Shopping Cart ({sumShoppingCard})
-                    </SheetTitle>
-                  </SheetHeader>
-                  <div className="mt-8 flex flex-col gap-4">
-                    {cartItems?.map((item) => (
-                      <div key={item.id} className="flex items-center gap-4">
-                        <img
-                          src={`/images/imageProducts/${item.product.image[0]}`}
-                          alt={item.product.name}
-                          width={60}
-                          height={60}
-                          className="rounded-md"
-                        />
-                        <div className="flex-1">
-                          <h3 className="font-medium">{item.product.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {item.quantity} × ${item.product.price.toFixed(2)}
-                          </p>
+              {isAuthenticated && (
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative">
+                      <ShoppingCart className="h-5 w-5" />
+                      <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-green-600 text-xs text-white flex items-center justify-center">
+                        {sumShoppingCard}
+                      </span>
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle>Shopping Cart ({sumShoppingCard})</SheetTitle>
+                    </SheetHeader>
+                    <div className="mt-8 flex flex-col gap-4">
+                      {cartItems?.map((item) => (
+                        <div key={item.id} className="flex items-center gap-4">
+                          <img
+                            src={`/images/imageProducts/${item.product.image[0]}`}
+                            alt={item.product.name}
+                            width={60}
+                            height={60}
+                            className="rounded-md"
+                          />
+                          <div className="flex-1">
+                            <h3 className="font-medium">{item.product.name}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {item.quantity} × ${item.product.price.toFixed(2)}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => removeFromCartShoping(item.id)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => removeFromCartShoping(item.id)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                      ))}
+                      <div className="mt-4 space-y-4">
+                        <div className="flex justify-between">
+                          <span>Total</span>
+                          <span className="font-medium">
+                            ${totalShoping?.toFixed(2)}
+                          </span>
+                        </div>
+                        <SheetClose asChild>
+                          <Button
+                            className="w-full bg-green-600 hover:bg-green-700"
+                            type="submit"
+                            onClick={() => navigate('/shopping-cart')}
+                          >
+                            Shopping Cart
+                          </Button>
+                        </SheetClose>
                       </div>
-                    ))}
-                    <div className="mt-4 space-y-4">
-                      <div className="flex justify-between">
-                        <span>Total</span>
-                        <span className="font-medium">${totalShoping?.toFixed(2)}</span>
-                      </div>
-                      <SheetClose asChild>
-                        <Button
-                          className="w-full bg-green-600 hover:bg-green-700"
-                          type="submit"
-                          onClick={() => navigate('/shopping-cart')}
-                        >
-                          Shopping Cart
-                        </Button>
-                      </SheetClose>
                     </div>
-                  </div>
-                </SheetContent>
-              </Sheet>}
+                  </SheetContent>
+                </Sheet>
+              )}
               <div className="flex flex-col">
-                {isAuthenticated && <div>
-                  <span className="text-xs text-muted-foreground">
-                  Shopping cart:
-                </span>
-                <span className="font-medium">$57.00</span></div>}
+                {isAuthenticated && (
+                  <div>
+                    <span className="text-xs text-muted-foreground">
+                      Shopping cart:
+                    </span>
+                    <span className="font-medium">$57.00</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -20,6 +20,8 @@ import { useEffect, useState } from 'react';
 import { getAllWishlistByUserIdAPI, postWishlistAPI } from '@/apis';
 import xmljs from 'xml-js';
 import { toast } from 'react-toastify';
+import * as xmljs from 'xml-js';
+
 interface Product {
   id: string;
   name: string;
@@ -53,8 +55,13 @@ export default function Shop() {
   const fetchDataWishList = async () => {
     try {
       const response = await getAllWishlistByUserIdAPI(userId);
-      console.log('response~wishlist ', response);
-      setDataWishList(response);
+      const xmlData = response.data; // response.data là chuỗi XML
+      console.log('🚀 ~ fetchData ~ xmlData:', xmlData);
+      // console.log('🚀 ~ raw XML data:', xmlData);
+
+      // Chuyển đổi XML sang JSON
+      const jsonData = xmljs.xml2js(xmlData, { compact: true });
+      console.log('🚀 ~ fetchData ~ jsonData:', jsonData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }

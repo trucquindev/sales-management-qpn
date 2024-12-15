@@ -29,9 +29,7 @@ export const getDetailProductAPI = async (productId: string | undefined) => {
 //   return response.data;
 // };
 export const getAllWishlistByUserIdAPI = async (userId: string | undefined) => {
-  const response = await authorizedAxiosInstance.get(
-    `/api/Wishlist/byuser/${userId}`
-  );
+  const response = await authorizedAxiosInstance.get(`/wishlist/${userId}`);
   return response.data;
 };
 interface ProductWishlist {

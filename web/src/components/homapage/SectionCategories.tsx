@@ -13,21 +13,18 @@ const SectionCategories = () => {
     try {
       const response = await getAllCategoryAPI(); // Gọi API để lấy dữ liệu
       const xmlData = response.data; // response.data là chuỗi XML
-      console.log('🚀 ~ fetchData ~ xmlData:', xmlData);
+      // console.log('🚀 ~ fetchData ~ xmlData:', xmlData);
       // console.log('🚀 ~ raw XML data:', xmlData);
 
       // Chuyển đổi XML sang JSON
       const jsonData = xmljs.xml2js(xmlData, { compact: true });
+      console.log('🚀 ~ fetchData ~ jsonData:', jsonData);
       // console.log('🚀 ~ parsed JSON:', jsonData);
       // Tiến hành xử lý dữ liệu
-      const categories = jsonData.result?.name.map(
-        (category: any, index: number) => ({
-          name: category._text,
-          image: jsonData.result?.image[index]._text,
-        })
-      );
-
-      // console.log('Categories:', categories);
+      const categories = jsonData.result?.item.map((category: any) => ({
+        name: category.name._text,
+        image: category.image._text,
+      }));
       setCategory(categories); // Lưu vào state để hiển thị
     } catch (error) {
       console.error('Error fetching or parsing data:', error);
