@@ -45,7 +45,6 @@ const SectionProducts = () => {
   useEffect(() => {
     fetchData();
   }, []);
-  console.log(isProduct);
 
   const fillStar = (starCount: number) => {
     return Array.from({ length: starCount }, (_, i) => (
