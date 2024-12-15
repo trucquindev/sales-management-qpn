@@ -8,14 +8,22 @@ const jsonToXml = (jsonData) => {
   return builder.buildObject(jsonData);
 };
 async function getAllCategories() {
-  const result = await await GET_DB()
-    .collection(USER_COLLECTION)
-    .find({}, { projection: { _id: 0 } })
-    .toArray();
-  const xmlData = jsonToXml({ result });
+  const result = await GET_DB().collection(USER_COLLECTION).find({}).toArray();
+
+  // Xử lý dữ liệu thành cấu trúc mong muốn
+  const items = result.map((category) => ({
+    item: [
+      { id: category._id.toString() },
+      { name: category.name },
+      { image: category.image },
+    ],
+  }));
+
+  // Bọc toàn bộ dữ liệu trong thẻ <result>
+  const xmlData = jsonToXml({ result: items });
+
   return xmlData;
 }
-
 module.exports = {
   getAllCategories,
 };
