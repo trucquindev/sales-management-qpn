@@ -1,141 +1,108 @@
-import { Star } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Slider } from '@/components/ui/slider';
-import { Badge } from '@/components/ui/badge';
+import { Heart, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import Potato from '@/assets/potato.png';
-import Capsicum from '@/assets/capsicum.png';
-import ChaniseCabbage from '@/assets/chanise-cabbage.png';
-import GreenLettuce from '@/assets/green-littuce.png';
-import Eggplant from '@/assets/eggplant.png';
-import FreshCauliflower from '@/assets/fresh-cauliflower.png';
-import FreshMango from '@/assets/fresh-mango.png';
-import GreenApple from '@/assets/green-apple.png';
-import GreenCapsicum from '@/assets/green-capsicum.png';
-import GreenChili from '@/assets/green-chili.png';
-import GreenCucumber from '@/assets/green-cucumber.png';
-import LadiesFinger from '@/assets/ladies-finger.png';
-import LadiesFinger1 from '@/assets/ladies-finger-1.png';
-import RedChilli from '@/assets/red-chili.png';
-import RedTomato from '@/assets/red-tomato.png';
-import { useNavigate } from 'react-router-dom';
-
+} from "@/components/ui/select";
+import { useNavigate } from "react-router-dom";
+import {
+  getAllCategoryAPI,
+  getAllProductAPI,
+  postShoppingCard,
+} from "@/apis/shop/product";
+import { useEffect, useState } from "react";
+import { getAllWishlistByUserIdAPI, postWishlistAPI } from "@/apis"
+import {toast} from 'react-toastify'
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  rating: number;
+  image: string;
+}
+interface WishList {
+  id?: string;
+  productId:string;
+  name:string;
+  price:number;
+  image:string;
+  quantity:number;
+  stockstt: boolean;
+  userId:string;
+  unit:string;
+}
 export default function Shop() {
-  const products = [
-    {
-      id: 1,
-      name: 'Potato',
-      price: 4.99,
-      rating: 4.5,
-      image: Potato,
-    },
-    {
-      id: 2,
-      name: 'Fresh Capsicum',
-      price: 3.99,
-      rating: 4.2,
-      image: Capsicum,
-    },
-    {
-      id: 3,
-      name: 'Chanise Cabbage',
-      price: 2.99,
-      rating: 4.8,
-      image: ChaniseCabbage,
-    },
-    {
-      id: 4,
-      name: 'Green Lettuce',
-      price: 4.99,
-      rating: 4.5,
-      image: GreenLettuce,
-    },
-    {
-      id: 5,
-      name: 'Eggplant',
-      price: 3.99,
-      rating: 4.2,
-      image: Eggplant,
-    },
-    {
-      id: 6,
-      name: 'Fresh Cauliflower',
-      price: 2.99,
-      rating: 4.8,
-      image: FreshCauliflower,
-    },
-    {
-      id: 7,
-      name: 'Fresh Mango',
-      price: 4.99,
-      rating: 4.5,
-      image: FreshMango,
-    },
-    {
-      id: 8,
-      name: 'Green Apple',
-      price: 3.99,
-      rating: 4.2,
-      image: GreenApple,
-    },
-    {
-      id: 9,
-      name: 'Green Capsicum',
-      price: 2.99,
-      rating: 4.8,
-      image: GreenCapsicum,
-    },
-    {
-      id: 10,
-      name: 'Green Chili',
-      price: 4.99,
-      rating: 4.5,
-      image: GreenChili,
-    },
-    {
-      id: 11,
-      name: 'Green Cucumber',
-      price: 3.99,
-      rating: 4.2,
-      image: GreenCucumber,
-    },
-    {
-      id: 12,
-      name: 'Ladies Finger',
-      price: 2.99,
-      rating: 4.8,
-      image: LadiesFinger,
-    },
-    {
-      id: 13,
-      name: 'Ladies Finger',
-      price: 4.99,
-      rating: 4.5,
-      image: LadiesFinger1,
-    },
-    {
-      id: 14,
-      name: 'Red Chilli',
-      price: 3.99,
-      rating: 4.2,
-      image: RedChilli,
-    },
-    {
-      id: 15,
-      name: 'Red Tomato',
-      price: 2.99,
-      rating: 4.8,
-      image: RedTomato,
-    },
-  ];
-  const navigate = useNavigate()
+  const [isProduct, setIsProduct] = useState<
+    { id: string; name: string; price: number; rating: number; image: string }[]
+  >([]);
+  const [isCategory, setIsCategory] = useState<{ id: number; name: string }[]>(
+    []
+  );
+
+  const navigate = useNavigate();
+  const [dataWishList, setDataWishList] = useState<WishList[]>([])
+  const userId = '67433030077b3eb2ae98bcad'
+  const [isClick, setIsClick] = useState(false)
+  const fetchDataWishList = async () =>{
+    try {
+      const response = await getAllWishlistByUserIdAPI(userId)
+      console.log('response~wishlist ',response)
+      setDataWishList(response)
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+  useEffect(()=>{
+    fetchDataWishList()
+  },[isClick])
+  const fetchData = async () => {
+    try {
+      const responseCategory = await getAllCategoryAPI();
+      setIsCategory(responseCategory);
+
+      const responseProduct = await getAllProductAPI();
+      setIsProduct(responseProduct);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleClickAddCart = async (id: string) => {
+    await postShoppingCard("674c1749f333612d17d206fe", id);
+  };
+ 
+  const handleClickAddCartToWishlist = async (product: Product) => {
+    const userId = "67433030077b3eb2ae98bcad";
+    let initData:WishList = {
+      productId:product.id,
+      name: product.name,
+      price: product.price,
+      stockstt: true,
+      userId: userId,
+      image: product.image[0],
+      quantity: 1,
+      unit: "1kg",
+    };
+
+    const check = dataWishList.find(data=>(data.productId === initData.productId))
+    if(check){
+      toast.warn("Bạn đã thêm sản phẩm này vào danh sách yêu thích rồi!")
+    }else{
+      await postWishlistAPI(initData)
+      toast.success("Thêm thành công vào danh sách yêu thích")
+    }
+    setIsClick(!isClick)
+  };
   return (
     <div className="max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 p-4 md:p-6">
       {/* Sidebar */}
@@ -147,9 +114,11 @@ export default function Shop() {
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="vegetables">Vegetables</SelectItem>
-              <SelectItem value="fruits">Fruits</SelectItem>
-              <SelectItem value="organic">Organic</SelectItem>
+              {isCategory.map((category) => (
+                <SelectItem key={category.id} value={category.id.toString()}>
+                  {category.name}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -211,21 +180,42 @@ export default function Shop() {
       {/* Product Grid */}
       <div className="md:col-span-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <Card key={product.id} className="group" onClick={() => navigate('/shop/products/123')}>
+          {isProduct.map((product) => (
+            <Card
+              key={product.id}
+              className="group"
+              onClick={() => navigate(`/shop/products/${product.id}`)}
+            >
               <CardContent className="p-4">
                 <div className="aspect-square relative mb-4">
                   <img
-                    src={product.image}
+                    src={`/images/imageProducts/${product.image}`}
                     alt={product.name}
                     className="object-cover rounded-lg w-full h-full"
                   />
-                  <Button
-                    size="icon"
-                    className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    +
-                  </Button>
+                  <div className="flex flex-row">
+                    <Button
+                      size="icon"
+                      className="absolute bottom-2 right-14 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleClickAddCart(product.id.toString());
+                      }}
+                    >
+                      +
+                    </Button>
+                    <Button
+                      size="icon"
+                      className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsClick(true)
+                        handleClickAddCartToWishlist(product);
+                      }}
+                    >
+                      <Heart />
+                    </Button>
+                  </div>
                 </div>
                 <h3 className="font-semibold">{product.name}</h3>
                 <div className="flex items-center justify-between mt-2">
@@ -245,7 +235,7 @@ export default function Shop() {
           {[1, 2, 3, 4, 5].map((page) => (
             <Button
               key={page}
-              variant={page === 1 ? 'default' : 'outline'}
+              variant={page === 1 ? "default" : "outline"}
               size="icon"
               className="w-8 h-8"
             >

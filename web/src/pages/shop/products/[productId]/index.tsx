@@ -2,7 +2,9 @@ import { Star, Minus, Plus, ShoppingCart, Heart, Facebook, Twitter, Instagram } 
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import image from '@/assets/images/imageProducts/image.png'
-import image1 from '@/assets/images/imageProducts/image-11.png'
+import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { getDetailCategoryAPI, getDetailProductAPI } from '@/apis'
 interface Review {
   id: string
   name: string
@@ -47,6 +49,7 @@ const reviews: Review[] = [
 ]
 
 function StarRating({ rating }: { rating: number }) {
+  
   return (
     <div className="flex">
       {[1, 2, 3, 4, 5].map((star) => (
@@ -58,27 +61,68 @@ function StarRating({ rating }: { rating: number }) {
     </div>
   )
 }
+interface Product {
+  id: string;  
+  name: string;     
+  title: string;     
+  image: string[];       
+  start: number;     
+  description: string;   
+  price: number;      
+  sku: number;        
+  _Destroy: boolean;       
+  categoryId: string;      
+  reviews: any[];          
+}
+interface Category {
+  id:string;
+  name:string;
+  image:string;
+}
 export default function ProductPage() {
+  const [dataDetail, setDataDetail] = useState<Product>()
+  const [category, setCategory] = useState<Category>()
+  let params = useParams()
+  let productId :string|undefined = params.productId
+  const fetchData = async () => {
+    try {
+      const response = await getDetailProductAPI(productId);
+      const responseCategory = await getDetailCategoryAPI(response.product.categoryId);
+      
+      setCategory(responseCategory.category);
+      setDataDetail(response.product);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, [productId]);
+  console.log('prduct detail ~',dataDetail);
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="flex">
           <div className="w-20 mr-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="mb-4">
-                <img
-                  src={image1}
-                  alt={`Thumbnail ${i}`}
-                  width={80}
-                  height={80}
-                  className="rounded-md border border-gray-200"
-                />
-              </div>
-            ))}
+            {dataDetail?.image.map((i) => {
+              console.log(i);
+              
+              return (
+                <div key={i} className="mb-4">
+                  <img
+                    src={`/images/imageProducts/${i}`}
+                    alt={`Thumbnail ${i}`}
+                    width={80}
+                    height={80}
+                    className="rounded-md border border-gray-200"
+                  />
+                </div>
+              )
+            })}
           </div>
           <div className="flex-grow">
             <img
-              src={image1}
+              src={`/images/imageProducts/${dataDetail?.image[0]}`}
               alt="Chinese Cabbage"
               width={500}
               height={500}
@@ -88,25 +132,25 @@ export default function ProductPage() {
         </div>
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold">Chinese Cabbage</h1>
+            <h1 className="text-3xl font-bold">{dataDetail?.title}</h1>
             <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">In Stock</span>
           </div>
           <div className="flex items-center mb-4">
             {[...Array(5)].map((_, i) => (
               <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
             ))}
-            <span className="text-sm text-gray-500 ml-2">4.5 review</span>
+            <span className="text-sm text-gray-500 ml-2">{dataDetail?.reviews.length} reviews</span>
           </div>
           <div className="flex items-center mb-4">
-            <span className="text-3xl font-bold mr-2">$17.28</span>
-            <span className="text-lg text-gray-500 line-through">$48.00</span>
-            <span className="ml-2 text-red-500">64% Off</span>
+            <span className="text-3xl font-bold mr-2">${dataDetail?.price}</span>
+            <span className="text-lg text-gray-500 line-through">${(dataDetail?.price || 0)*2}</span>
+            <span className="ml-2 text-red-500">50% Off</span>
           </div>
           <div className="mb-4">
             <span className="font-semibold">Brand:</span> Acme
           </div>
           <p className="text-gray-600 mb-4">
-            Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nulla nibh diam, blandit vel consequat nec, ultrices at ipsum. Nulla varius magna a consequat pulvinar.
+           {dataDetail?.description}
           </p>
           <div className="flex items-center mb-4">
             <Button variant="outline" size="icon">
@@ -131,7 +175,7 @@ export default function ProductPage() {
             <Instagram className="h-5 w-5" />
           </div>
           <div className="mb-4">
-            <span className="font-semibold">Category:</span> Vegetables
+            <span className="font-semibold">Category:</span> {category?.name}
           </div>
           <div>
             <span className="font-semibold">Tags:</span> Vegetables, Healthy, Chinese, Cabbage, Green Cabbage
@@ -151,16 +195,8 @@ export default function ProductPage() {
             <div className='flex justify-center items-center'>
               <div className='w-1/2'>
                 <p className="text-gray-600">
-                  Sed commodo aliquam elit ac porta. Fusce ipsum felis, imperdiet at posuere ac, viverra at
-                  mauris. Maecenas tincidunt ligula a sem vestibulum pharetra. Maecenas suscipit varius ipsum,
-                  sed volutpat nulla rutrum nec. Nulla hendrerit enim nec ante hendrerit, sed scelerisque velit finibus.
+                  {dataDetail?.description}
                 </p>
-                <ul className="list-disc list-inside mt-4 space-y-2">
-                  <li>100 g of fresh leaves provides</li>
-                  <li>Aliquam ac elit at augue volutpat elementum</li>
-                  <li>Quisque nec enim eget sapien molestie</li>
-                  <li>Proin convallis odio volutpat finibus posuere</li>
-                </ul>
               </div>
               <div className="flex flex-col gap-4">
                 <div>
@@ -260,7 +296,7 @@ export default function ProductPage() {
                   </div>
                 </div>
               ))}
-              <button className="w-full py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+              <button type="button" className="w-full py-2 px-4 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
                 Load More
               </button>
             </div>

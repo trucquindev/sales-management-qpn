@@ -1,14 +1,13 @@
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Link } from '@/router';
 import { ChevronRight, Heart } from 'lucide-react';
 
 export default function ImageGallery() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] h-screen">
+    <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] Pb-10">
       <div className="border-r">
-        <ScrollArea className="h-screen px-4 py-6">
+        <div className="px-4 py-6">
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 rounded-full bg-primary" />
@@ -69,9 +68,9 @@ export default function ImageGallery() {
               </div>
             </div>
           </div>
-        </ScrollArea>
+        </div>
       </div>
-      <div className="h-screen overflow-auto">
+      <div>
         <div className="p-6">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 9 }).map((_, i) => (

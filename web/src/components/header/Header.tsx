@@ -5,7 +5,7 @@ import {
   ShoppingCart,
   ChevronDown,
   Phone,
-  X,
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,47 +23,104 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { useState } from 'react';
-import { useNavigate } from'react-router-dom';
-import image2 from '@/assets/images/imageProducts/image-2.png';
-import image1 from '@/assets/images/imageProducts/image-1.png';
-
-interface CartItem {
+import { useEffect, useState } from 'react';
+// import image1 from '@/assets/images/imageProducts/image-1.png';
+import { getAllWishlistByUserIdAPI } from '@/apis';
+import { deleteShoppingCard, getShoppingCardCustomer } from '@/apis/shop/product';
+// import image1 from '@/assets/images/imageProducts/image-3.png';
+import { useNavigate } from 'react-router-dom';
+import { selectIsAuthenticated, selectCurrentUser, logoutUser } from '@/redux/user/userSlice'; // Thêm các selector và action từ userSlice
+import { useDispatch, useSelector } from 'react-redux';
+interface CartIdemWishList {
   id: string;
   name: string;
   price: number;
   quantity: number;
-  weight: string;
+  unit: string;
+  userId: string;
+  stockstt: boolean;
   image: string;
 }
+interface Product {
+  categoryId: string;
+  description: string;
+  id: string;
+  idAdditionInfor: string | null;
+  image: string[];
+  name: string;
+  price: number;
+  sku: number;
+  start: number;
+  title: string;
+  _Destroy: boolean;
+}
+
+interface CartItem {
+  customerId: string;
+  id: string;
+  product: Product;
+  productId: string;
+  quantity: number;
+}
+
 
 export default function Component() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: '1',
-      name: 'Fresh Indian Orange',
-      price: 12.0,
-      quantity: 1,
-      weight: '1 kg',
-      image: image2,
-    },
-    {
-      id: '2',
-      name: 'Green Apple',
-      price: 14.0,
-      quantity: 1,
-      weight: '1 kg',
-      image: image1,
-    },
-  ]);
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+  const [dataWishList, setDataWishList] = useState<CartIdemWishList[]>([]);
+
+  const [cartItems, setCartItems] = useState<CartItem[] | null>(null);
+  const totalShoping = cartItems?.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
     0
   );
 
-  const removeFromCart = (id: string) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
+  const userId = '67433030077b3eb2ae98bcad'; // replace with actual user ID
+  const fetchDataWishlist = async () => {
+    try {
+      const response = await getAllWishlistByUserIdAPI(userId);
+      setDataWishList(response);
+      
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      const rs = await getShoppingCardCustomer('674c1749f333612d17d206fe');
+      // setIsShoppingCard(rs);
+      setCartItems(rs);
+    };
+    fetchData();
+  }, []);
+
+  const sumShoppingCard = cartItems ? cartItems.reduce((total, item) => {
+    return total + item.quantity;
+  }, 0) : 0;
+  useEffect(() => {
+    fetchDataWishlist();
+  }, []);
+  const totalWishList = dataWishList.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+  const removeFromCartShoping = async (id: string) => {
+    if (cartItems) {
+      setCartItems(cartItems.filter((item) => item.id !== id));
+    }
+    await deleteShoppingCard(id);
+  };
+
+  const removeFromCartWishList = (id: string) => {
+    setDataWishList(dataWishList.filter((item) => item.id !== id));
+  };
+
+  const dispatch = useDispatch()
+  const handleLogout = () => {
+    dispatch(logoutUser()); // Dispatch action Redux
+    navigate('/sign-in'); // Điều hướng về trang đăng nhập
+  };
+  const isAuthenticated = useSelector(selectIsAuthenticated); // Kiểm tra xem người dùng đã đăng nhập chưa
+  const currentUser = useSelector(selectCurrentUser);
+
   const navigate = useNavigate();
   return (
     <header className="w-full flex flex-col items-center border">
@@ -96,13 +153,23 @@ export default function Component() {
               </DropdownMenuContent>
             </DropdownMenu>
             <div className="flex items-center gap-2">
-              <Link to="/sign-in" className="hover:text-primary">
-                Sign In
-              </Link>
-              <span>/</span>
-              <Link to="/sign-up" className="hover:text-primary">
-                Sign Up
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  {/* Hiển thị email người dùng nếu đăng nhập thành công */}
+                  <span onClick={() => navigate('/dashboard')} className="hover:text-primary">
+                    {currentUser?.email || "User"}
+                  </span>
+                  <Button variant="ghost" size="sm" onClick={handleLogout}>
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/sign-in" className="hover:text-primary">Sign In</Link>
+                  <span>/</span>
+                  <Link to="/sign-up" className="hover:text-primary">Sign Up</Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -128,21 +195,21 @@ export default function Component() {
 
           <div className="flex items-center">
             <div className="flex items-center gap-2">
-              <Sheet>
+             {isAuthenticated &&  <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative">
-                    <Heart className="h-5 w-5"/>
+                    <Heart className="h-5 w-5" />
                     <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-green-600 text-xs text-white flex items-center justify-center">
-                      {cartItems.length}
+                      {dataWishList.length}
                     </span>
                   </Button>
                 </SheetTrigger>
-                <SheetContent>
+                <SheetContent className='overflow-y-auto'>
                   <SheetHeader>
-                    <SheetTitle>My wishlist ({cartItems.length})</SheetTitle>
+                    <SheetTitle>My wishlist ({dataWishList.length})</SheetTitle>
                   </SheetHeader>
                   <div className="mt-8 flex flex-col gap-4">
-                    {cartItems.map((item) => (
+                    {dataWishList.map((item) => (
                       <div key={item.id} className="flex items-center gap-4">
                         <img
                           src={item.image}
@@ -154,13 +221,13 @@ export default function Component() {
                         <div className="flex-1">
                           <h3 className="font-medium">{item.name}</h3>
                           <p className="text-sm text-muted-foreground">
-                            {item.weight} × ${item.price.toFixed(2)}
+                            {item.unit} × ${item.price.toFixed(2)}
                           </p>
                         </div>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCartWishList(item.id)}
                         >
                           <X className="h-4 w-4" />
                         </Button>
@@ -169,52 +236,58 @@ export default function Component() {
                     <div className="mt-4 space-y-4">
                       <div className="flex justify-between">
                         <span>Total</span>
-                        <span className="font-medium">${total.toFixed(2)}</span>
+                        <span className="font-medium">${totalWishList.toFixed(2)}</span>
                       </div>
                       <SheetClose asChild>
-                        <Button className="w-full bg-green-600 hover:bg-green-700" type="submit" onClick={()=>navigate('/wishlist')}>
+                        <Button
+                          className="w-full bg-green-600 hover:bg-green-700"
+                          type="submit"
+                          onClick={() => navigate('/wishlist')}
+                        >
                           Go to my wishlist
                         </Button>
                       </SheetClose>
                     </div>
                   </div>
                 </SheetContent>
-              </Sheet>
+              </Sheet>}
             </div>
             <div className="flex items-center gap-2">
-              <Sheet>
+              {isAuthenticated && <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative">
                     <ShoppingCart className="h-5 w-5" />
                     <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-green-600 text-xs text-white flex items-center justify-center">
-                      {cartItems.length}
+                      {sumShoppingCard}
                     </span>
                   </Button>
                 </SheetTrigger>
                 <SheetContent>
                   <SheetHeader>
-                    <SheetTitle>Shopping Cart ({cartItems.length})</SheetTitle>
+                    <SheetTitle>
+                      Shopping Cart ({sumShoppingCard})
+                    </SheetTitle>
                   </SheetHeader>
                   <div className="mt-8 flex flex-col gap-4">
-                    {cartItems.map((item) => (
+                    {cartItems?.map((item) => (
                       <div key={item.id} className="flex items-center gap-4">
                         <img
-                          src={item.image}
-                          alt={item.name}
+                          src={`/images/imageProducts/${item.product.image[0]}`}
+                          alt={item.product.name}
                           width={60}
                           height={60}
                           className="rounded-md"
                         />
                         <div className="flex-1">
-                          <h3 className="font-medium">{item.name}</h3>
+                          <h3 className="font-medium">{item.product.name}</h3>
                           <p className="text-sm text-muted-foreground">
-                            {item.weight} × ${item.price.toFixed(2)}
+                            {item.quantity} × ${item.product.price.toFixed(2)}
                           </p>
                         </div>
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeFromCartShoping(item.id)}
                         >
                           <X className="h-4 w-4" />
                         </Button>
@@ -223,22 +296,27 @@ export default function Component() {
                     <div className="mt-4 space-y-4">
                       <div className="flex justify-between">
                         <span>Total</span>
-                        <span className="font-medium">${total.toFixed(2)}</span>
+                        <span className="font-medium">${totalShoping?.toFixed(2)}</span>
                       </div>
                       <SheetClose asChild>
-                        <Button className="w-full bg-green-600 hover:bg-green-700" type="submit" onClick={()=>navigate('/shopping-cart')}>
+                        <Button
+                          className="w-full bg-green-600 hover:bg-green-700"
+                          type="submit"
+                          onClick={() => navigate('/shopping-cart')}
+                        >
                           Shopping Cart
                         </Button>
                       </SheetClose>
                     </div>
                   </div>
                 </SheetContent>
-              </Sheet>
+              </Sheet>}
               <div className="flex flex-col">
-                <span className="text-xs text-muted-foreground">
+                {isAuthenticated && <div>
+                  <span className="text-xs text-muted-foreground">
                   Shopping cart:
                 </span>
-                <span className="font-medium">$57.00</span>
+                <span className="font-medium">$57.00</span></div>}
               </div>
             </div>
           </div>
@@ -266,7 +344,7 @@ export default function Component() {
                   Shop
                 </Link>
               </li>
-              
+
               <li>
                 <Link
                   to="/blog"

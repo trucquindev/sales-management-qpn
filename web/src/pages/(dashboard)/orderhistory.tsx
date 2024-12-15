@@ -34,9 +34,6 @@ export default function Component() {
         setCurrentPage(page);
     };
 
-    const handleViewDetails = (orderId: string) => {
-        navigate(`/orderdetail`); // Navigate to OrderDetail page with orderId as a param
-    };
 
     return (
         <div className="w-full max-w-4xl mx-auto p-4">
@@ -58,8 +55,7 @@ export default function Component() {
                                 <tr
                                     key={order.id}
                                     className={`border-t ${index % 2 === 0 ? "bg-gray-50" : "bg-white"}`}
-                                >
-                                    <td className="p-3 text-sm">#{order.id}</td>
+                                ><td className="p-3 text-sm">#{order.id}</td>
                                     <td className="p-3 text-sm">{order.date}</td>
                                     <td className="p-3 text-sm">
                                         ${order.total.toFixed(2)} ({order.products} Product
@@ -77,15 +73,6 @@ export default function Component() {
                                         >
                                             {order.status}
                                         </span>
-                                    </td>
-                                    <td className="p-3 text-sm text-right">
-                                        <Button
-                                            variant="link"
-                                            className="text-green-600 h-auto p-0"
-                                            onClick={() => handleViewDetails(order.id)}
-                                        >
-                                            View Details
-                                        </Button>
                                     </td>
                                 </tr>
                             ))}
@@ -123,8 +110,7 @@ export default function Component() {
                         {/* Next Page Button */}
                         <Button
                             variant="ghost"
-                            size="icon"
-                            disabled={currentPage === totalPages}
+                            size="icon" disabled={currentPage === totalPages}
                             className="h-8 w-8"
                             onClick={() => handlePageChange(currentPage + 1)}
                         >

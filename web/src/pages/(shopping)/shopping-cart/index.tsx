@@ -1,51 +1,65 @@
 import { Minus, Plus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
-import image1 from '@/assets/images/imageProducts/image-3.png';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-interface CartItem {
-  id: number;
+import { deleteShoppingCard, getShoppingCardCustomer, updateShoppingCard } from '@/apis/shop/product';
+
+interface Product {
+  categoryId: string;
+  description: string;
+  id: string;
+  idAdditionInfor: string | null;
+  image: string[];
   name: string;
   price: number;
+  sku: number;
+  start: number;
+  title: string;
+  _Destroy: boolean;
+}
+
+interface CartItem {
+  customerId: string;
+  id: string;
+  product: Product;
+  productId: string;
   quantity: number;
-  image: string;
 }
 
 export default function Component() {
-  const [items, setItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: 'Green Capsicum',
-      price: 14.0,
-      quantity: 5,
-      image: image1,
-    },
-    {
-      id: 2,
-      name: 'Red Capsicum',
-      price: 14.0,
-      quantity: 5,
-      image: image1,
-    },
-  ]);
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[] | null>(null);
 
-  const updateQuantity = (id: number, change: number) => {
-    setItems(
-      items.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(0, item.quantity + change) }
-          : item
-      )
-    );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const rs = await getShoppingCardCustomer('674c1749f333612d17d206fe');
+      setItems(rs);
+      setCartItems(items || []);
+    };
+    fetchData();
+  }, [items]);  
+
+
+  const updateQuantity = async (item: {
+    id: string;
+    quantity: number;
+    productID: string;
+    customerId: string;
+  }, num: number) => {
+    await updateShoppingCard(item.id, item.quantity + num, item.productID, item.customerId);
   };
 
-  const removeItem = (id: number) => {
-    setItems(items.filter((item) => item.id !== id));
+  const removeItem = async (id: string) => {
+    if (cartItems) {
+      setCartItems(cartItems.filter((item) => item.id !== id));
+    }
+    await deleteShoppingCard(id);
   };
 
   const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum, item) => sum + item.product.price * item.quantity,
     0
   );
   const navigate = useNavigate();
@@ -69,24 +83,23 @@ export default function Component() {
               >
                 <div className="col-span-2 flex items-center gap-4">
                   <img
-                    src={item.image}
-                    alt={item.name}
+                    src={`/images/imageProducts/${item.product.image[0]}`}
+                    alt={item.product.name}
                     width={80}
                     height={80}
                     className="rounded-md"
                   />
                   <div>
-                    <h3 className="font-medium">{item.name}</h3>
+                    <h3 className="font-medium">{item.product.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      ${item.price.toFixed(2)}
-                    </p>
-                  </div>
+                      ${item.product.price.toFixed(2)}
+                    </p></div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => updateQuantity(item.id, -1)}
+                    onClick={() => updateQuantity({ ...item, productID: item.productId }, -1)}
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
@@ -94,7 +107,7 @@ export default function Component() {
                     type="number"
                     value={item.quantity}
                     onChange={(e) => {
-                      const newQuantity = parseInt(e.target.value) || 0;
+                      const newQuantity = Number.parseInt(e.target.value) || 0;
                       setItems(
                         items.map((i) =>
                           i.id === item.id ? { ...i, quantity: newQuantity } : i
@@ -106,14 +119,14 @@ export default function Component() {
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => updateQuantity(item.id, 1)}
+                    onClick={() => updateQuantity({ ...item, productID: item.productId }, 1)}
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="font-medium">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    ${(item.product.price * item.quantity).toFixed(2)}
                   </span>
                   <Button
                     variant="ghost"
@@ -159,8 +172,7 @@ export default function Component() {
             >
               Proceed to checkout
             </Button>
-          </div>
-        </div>
+          </div></div>
       </div>
     </div>
   );

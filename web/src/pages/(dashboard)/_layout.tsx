@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Home, Clock, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,10 +6,17 @@ import { useState } from 'react';
 
 export default function Component() {
     const [selected, setSelected] = useState('Dashboard');
+    const location = useLocation();
+
+    const handleClick = () => {
+        localStorage.removeItem("persist:root");
+        localStorage.removeItem("currentUser"); // Xóa thông tin người dùng
+    };
+
+    const isSelected = (path: any) => location.pathname === path;
 
     return (
         <div className="min-h-screen bg-white flex flex-col">
-
             {/* Main Content */}
             <div className="container mx-auto p-4 grid grid-cols-1 md:grid-cols-5 gap-3 flex-grow">
                 {/* Sidebar Navigation */}
@@ -23,16 +30,18 @@ export default function Component() {
                                 { name: 'Dashboard', icon: <Home className="h-4 w-4" />, path: '/dashboard' },
                                 { name: 'Order History', icon: <Clock className="h-4 w-4" />, path: '/orderhistory' },
                                 { name: 'Settings', icon: <Settings className="h-4 w-4" />, path: '/settings' },
-                                { name: 'Log-out', icon: <LogOut className="h-4 w-4" />, path: '/sign-in' },
+                            
                             ].map((item) => (
                                 <Link
                                     to={item.path}
                                     key={item.name}
-                                    onClick={() => setSelected(item.name)}
+                
                                 >
                                     <Button
                                         variant="ghost"
-                                        className={`w-full justify-start gap-2 h-10 px-2 ${selected === item.name ? 'font-bold text-black bg-green-50' : 'text-gray-500'}`}
+                                        className={`w-full justify-start gap-2 h-10 px-2 ${
+                                            isSelected(item.path) ? 'font-bold text-black bg-green-50' : 'text-gray-500'
+                                        }`}
                                     >
                                         {item.icon}
                                         <span className="text-sm">{item.name}</span>
@@ -48,8 +57,6 @@ export default function Component() {
                     <Outlet /> {/* Hiển thị nội dung của route con */}
                 </div>
             </div>
-
-
         </div>
     );
 }

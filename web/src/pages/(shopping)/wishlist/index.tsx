@@ -1,36 +1,34 @@
 import { X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import image3 from '@/assets/images/imageProducts/image-3.png';
-const products = [
-  {
-    id: 1,
-    img: image3,
-    title: 'Green Capsicum',
-    priceDiscount: 14.99,
-    priceOriginal: 19.99,
-    stock: true,
-  },
-  {
-    id: 2,
-    img: image3,
-    title: 'Chinese Cabbage',
-    priceDiscount: 45.99,
-    stock: true,
-  },
-  {
-    id: 3,
-    img: image3,
-    title: 'Fresh Sujapuri Mango',
-    priceDiscount: 10.99,
-    stock: false,
-  },
-];
+import { useEffect, useState } from 'react';
+import { getAllWishlistByUserIdAPI } from '@/apis';
+interface WishList {
+  id: string;
+  name:string;
+  price:string;
+  image:string;
+  stockStatus:boolean;
+  userId:string;
+}
 export default function Component() {
+  const [dataWishList, setDataWishList] = useState<WishList[]>([])
+  const userId = '67433030077b3eb2ae98bcad'
+  const fetchDataWishList = async () =>{
+    try {
+      const response = await getAllWishlistByUserIdAPI(userId)
+      console.log('response~wishlist ',response)
+      setDataWishList(response)
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
+  useEffect(()=>{
+    fetchDataWishList()
+  },[])
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold text-center mb-8">My Wishlist</h1>
-
       <div className="rounded-lg border bg-card">
         <div className="relative w-full overflow-auto">
           <table className="w-full caption-bottom text-sm">
@@ -50,7 +48,7 @@ export default function Component() {
               </tr>
             </thead>
             <tbody className="[&_tr:last-child]:border-0">
-              {products.map((product) => {
+              {dataWishList.map((product) => {
                 return (
                   <tr
                     key={product.id}
@@ -59,29 +57,29 @@ export default function Component() {
                     <td className="p-4 align-middle">
                       <div className="flex items-center gap-4">
                         <img
-                          src={product.img}
+                          src={`src/assets/images/imageProducts/${product.image}`}
                           alt="Green Capsicum"
                           className="rounded-lg object-cover"
                           width={60}
                           height={60}
                         />
-                        <span>{product.title}</span>
+                        <span>{product.name}</span>
                       </div>
                     </td>
                     <td className="p-4 align-middle">
                       <div className="flex items-center gap-2">
                         <span className="font-medium">
-                          ${product.priceDiscount}
+                          ${product.price}
                         </span>
-                        {product.priceOriginal && (
+                        {product.price && (
                           <span className="text-sm text-muted-foreground line-through">
-                            ${product.priceOriginal}
+                            ${+product.price*2}
                           </span>
                         )}
                       </div>
                     </td>
                     <td className="p-4 align-middle">
-                      {product.stock ? (
+                      {!product.stockStatus ? (
                         <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold text-green-500 bg-green-50">
                           In Stock
                         </span>
