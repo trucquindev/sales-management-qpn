@@ -85,18 +85,18 @@ export default function Component() {
     try {
       const response = await getAllWishlistByUserIdAPI(userId);
       const xmlData = response.data; // response.data là chuỗi XML
-      console.log('🚀 ~ fetchData ~ xmlData:', xmlData);
       // console.log('🚀 ~ raw XML data:', xmlData);
 
       // Chuyển đổi XML sang JSON
       const jsonData = xmljs.xml2js(xmlData, { compact: true });
-      console.log('🚀 ~ fetchData ~ jsonData:', jsonData);
 
       const wishlists = jsonData.result?.item.map((wishlist: any) => ({
         name: wishlist.name._text,
         image: wishlist.image._text,
         price: wishlist.price._text,
         id: wishlist.id._text,
+        quantity: wishlist.quantity._text,
+        unit: wishlist.unit._text,
         stockstt: wishlist.stockstt._text === 'true',
         userId: wishlist.userId._text,
       }));
@@ -116,7 +116,7 @@ export default function Component() {
 
   const sumShoppingCard = cartItems
     ? cartItems.reduce((total, item) => {
-        return total + item.quantity;
+        return total + +item.quantity;
       }, 0)
     : 0;
   useEffect(() => {
@@ -268,7 +268,7 @@ export default function Component() {
                       <div className="flex justify-between">
                         <span>Total</span>
                         <span className="font-medium">
-                          ${totalWishList.toFixed(2)}
+                          ${+totalWishList.toFixed(2)}
                         </span>
                       </div>
                       <SheetClose asChild>
@@ -313,7 +313,8 @@ export default function Component() {
                           <div className="flex-1">
                             <h3 className="font-medium">{item.product.name}</h3>
                             <p className="text-sm text-muted-foreground">
-                              {item.quantity} × ${item.product.price.toFixed(2)}
+                              {+item.quantity} × $
+                              {+item.product.price.toFixed(2)}
                             </p>
                           </div>
                           <Button

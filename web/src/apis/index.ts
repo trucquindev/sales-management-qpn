@@ -41,8 +41,16 @@ interface ProductWishlist {
   quantity: number;
   unit: string;
 }
-export const postWishlistAPI = async (data: ProductWishlist) => {
-  const response = await authorizedAxiosInstance.post(`/api/Wishlist`, data);
+export const postWishlistAPI = async (data: any) => {
+  const response = await authorizedAxiosInstance.post(
+    `/wishlist/create`,
+    data,
+    {
+      headers: {
+        'Content-Type': 'application/xml', // Đặt Content-Type là application/xml
+      },
+    }
+  );
   return response.data;
 };
 export const getAllCustomerAPI = async () => {
