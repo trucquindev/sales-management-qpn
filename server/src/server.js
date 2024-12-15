@@ -5,14 +5,18 @@ import exitHook from 'async-exit-hook';
 import { env } from '~/config/environment';
 import { CONNECT_DB, CLOSE_DB } from '~/config/mongodb';
 import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware';
+const bodyParser = require('body-parser');
 import cors from 'cors';
 import { APIs_V1 } from './routes/v1';
 
 const START_SERVER = () => {
   const app = express();
   app.use(cors());
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  // Cấu hình middleware
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: false }));
+  // app.use(express.json());
+  // app.use(express.urlencoded({ extended: true }));
   app.use('/', APIs_V1);
   app.use(errorHandlingMiddleware);
   if (env.BUILD_MODE === 'prod') {

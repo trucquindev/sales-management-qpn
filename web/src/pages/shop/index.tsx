@@ -1,24 +1,27 @@
-import { Heart, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Slider } from "@/components/ui/slider";
-import { Badge } from "@/components/ui/badge";
+import { Heart, Star } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
+import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useNavigate } from "react-router-dom";
+} from '@/components/ui/select';
+import { useNavigate } from 'react-router-dom';
 import {
   getAllCategoryAPI,
   getAllProductAPI,
   postShoppingCard,
-} from "@/apis/shop/product";
-import { useEffect, useState } from "react";
-import { getAllWishlistByUserIdAPI, postWishlistAPI } from "@/apis"
-import {toast} from 'react-toastify'
+} from '@/apis/shop/product';
+import { useEffect, useState } from 'react';
+import { getAllWishlistByUserIdAPI, postWishlistAPI } from '@/apis';
+import xmljs from 'xml-js';
+import { toast } from 'react-toastify';
+import * as xmljs from 'xml-js';
+
 interface Product {
   id: string;
   name: string;
@@ -28,14 +31,14 @@ interface Product {
 }
 interface WishList {
   id?: string;
-  productId:string;
-  name:string;
-  price:number;
-  image:string;
-  quantity:number;
+  productId: string;
+  name: string;
+  price: number;
+  image: string;
+  quantity: number;
   stockstt: boolean;
-  userId:string;
-  unit:string;
+  userId: string;
+  unit: string;
 }
 export default function Shop() {
   const [isProduct, setIsProduct] = useState<
@@ -46,30 +49,55 @@ export default function Shop() {
   );
 
   const navigate = useNavigate();
-  const [dataWishList, setDataWishList] = useState<WishList[]>([])
-  const userId = '67433030077b3eb2ae98bcad'
-  const [isClick, setIsClick] = useState(false)
-  const fetchDataWishList = async () =>{
+  const [dataWishList, setDataWishList] = useState<WishList[]>([]);
+  const userId = '67433030077b3eb2ae98bcad';
+  const [isClick, setIsClick] = useState(false);
+  const fetchDataWishList = async () => {
     try {
-      const response = await getAllWishlistByUserIdAPI(userId)
-      console.log('response~wishlist ',response)
-      setDataWishList(response)
+      const response = await getAllWishlistByUserIdAPI(userId);
+      const xmlData = response.data; // response.data là chuỗi XML
+      console.log('🚀 ~ fetchData ~ xmlData:', xmlData);
+      // console.log('🚀 ~ raw XML data:', xmlData);
+
+      // Chuyển đổi XML sang JSON
+      const jsonData = xmljs.xml2js(xmlData, { compact: true });
+      console.log('🚀 ~ fetchData ~ jsonData:', jsonData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  }
-  useEffect(()=>{
-    fetchDataWishList()
-  },[isClick])
+  };
+  useEffect(() => {
+    fetchDataWishList();
+  }, [isClick]);
+
   const fetchData = async () => {
     try {
       const responseCategory = await getAllCategoryAPI();
       setIsCategory(responseCategory);
 
       const responseProduct = await getAllProductAPI();
-      setIsProduct(responseProduct);
+
+      const xmlData = responseProduct.data;
+
+      const jsonData = xmljs.xml2js(xmlData, { compact: true });
+
+
+      const transformData = (data) => {
+        return data.map((item) => ({
+          id: item.id._text,
+          image: item.image._text,
+          name: item.name._text,
+          price: parseFloat(item.price._text),
+          star: parseInt(item.star._text, 10),
+        }));
+      };
+      const result = transformData(jsonData.result.item);
+
+      console.log('jsonData', result);
+
+      setIsProduct(result);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -78,30 +106,32 @@ export default function Shop() {
   }, []);
 
   const handleClickAddCart = async (id: string) => {
-    await postShoppingCard("674c1749f333612d17d206fe", id);
+    await postShoppingCard('674c1749f333612d17d206fe', id);
   };
- 
+
   const handleClickAddCartToWishlist = async (product: Product) => {
-    const userId = "67433030077b3eb2ae98bcad";
-    let initData:WishList = {
-      productId:product.id,
+    const userId = '67433030077b3eb2ae98bcad';
+    let initData: WishList = {
+      productId: product.id,
       name: product.name,
       price: product.price,
       stockstt: true,
       userId: userId,
       image: product.image[0],
       quantity: 1,
-      unit: "1kg",
+      unit: '1kg',
     };
 
-    const check = dataWishList.find(data=>(data.productId === initData.productId))
-    if(check){
-      toast.warn("Bạn đã thêm sản phẩm này vào danh sách yêu thích rồi!")
-    }else{
-      await postWishlistAPI(initData)
-      toast.success("Thêm thành công vào danh sách yêu thích")
+    const check = dataWishList.find(
+      (data) => data.productId === initData.productId
+    );
+    if (check) {
+      toast.warn('Bạn đã thêm sản phẩm này vào danh sách yêu thích rồi!');
+    } else {
+      await postWishlistAPI(initData);
+      toast.success('Thêm thành công vào danh sách yêu thích');
     }
-    setIsClick(!isClick)
+    setIsClick(!isClick);
   };
   return (
     <div className="max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-6 p-4 md:p-6">
@@ -114,11 +144,11 @@ export default function Shop() {
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
             <SelectContent>
-              {isCategory.map((category) => (
+              {/* {isCategory.map((category) => (
                 <SelectItem key={category.id} value={category.id.toString()}>
                   {category.name}
                 </SelectItem>
-              ))}
+              ))} */}
             </SelectContent>
           </Select>
         </div>
@@ -209,7 +239,7 @@ export default function Shop() {
                       className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setIsClick(true)
+                        setIsClick(true);
                         handleClickAddCartToWishlist(product);
                       }}
                     >
@@ -235,7 +265,7 @@ export default function Shop() {
           {[1, 2, 3, 4, 5].map((page) => (
             <Button
               key={page}
-              variant={page === 1 ? "default" : "outline"}
+              variant={page === 1 ? 'default' : 'outline'}
               size="icon"
               className="w-8 h-8"
             >
