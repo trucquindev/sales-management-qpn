@@ -10,6 +10,7 @@ import cors from 'cors';
 import { APIs_V1 } from './routes/v1';
 
 const START_SERVER = () => {
+  // Middleware xử lý XML
   const xmlParser = bodyParser.text({ type: 'application/xml' });
   const app = express();
   app.use(cors());

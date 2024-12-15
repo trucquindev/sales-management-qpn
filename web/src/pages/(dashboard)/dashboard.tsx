@@ -25,9 +25,9 @@ export default function Dashboard() {
                     <CardHeader>
                         <div className="flex flex-col items-center">
                             <div className="flex-shrink-0 w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center text-2xl font-bold text-gray-500">
-                                {user?.name.charAt(0).toUpperCase()}
+                                {user?.email.charAt(0).toUpperCase()}
                             </div>
-                            <h2 className="text-lg font-semibold mt-4">{user?.name}</h2>
+                            <h2 className="text-lg font-semibold mt-4">{user?.email}</h2>
                             <p className="text-sm text-gray-500">Customer</p>
                         </div>
                     </CardHeader>

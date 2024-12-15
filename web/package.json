@@ -30,6 +30,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.3.1",
+    "fast-xml-parser": "^4.5.1",
     "lucide-react": "^0.456.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -42,6 +43,7 @@
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
     "toastify": "^2.0.1",
+    "xml2js": "^0.6.2",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {

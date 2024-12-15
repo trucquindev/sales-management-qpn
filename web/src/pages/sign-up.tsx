@@ -1,75 +1,66 @@
+// sign-up.tsx  
 import { Button } from "@/components/ui/button";  
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";  
 import { Checkbox } from "@/components/ui/checkbox";  
 import { Input } from "@/components/ui/input";  
 import { Link, useNavigate } from "react-router-dom";  
 import { useDispatch, useSelector } from "react-redux";  
-import { AppDispatch } from "@/redux/store"; // Import AppDispatch  
-import { registerUserAPI, selectUserLoading, selectUserError } from "@/redux/user/userSlice"; // Import the registerUserAPI thunk and selectors  
+import { AppDispatch } from "@/redux/store";  
+import { registerUserAPI, selectUserLoading, selectUserError } from "@/redux/user/userSlice";  
 import { toast } from "react-toastify";  
 import { useState } from "react";  
 
 export default function SignUpComponent() {  
-  const dispatch: AppDispatch = useDispatch(); // Using AppDispatch for dispatch  
+  const dispatch: AppDispatch = useDispatch();  
   const navigate = useNavigate();  
-
-  // State for email, password, confirm password, terms acceptance, and name  
+  
+  // State variables  
   const [valueEmail, setValueEmail] = useState<string>("");  
   const [valuePassword, setValuePassword] = useState<string>("");  
   const [valueConfirmPassword, setValueConfirmPassword] = useState<string>("");  
   const [acceptedTerms, setAcceptedTerms] = useState<boolean>(false);  
-  const [valueName, setValueName] = useState<string>(""); // Added state for name  
+  const [valueName, setValueName] = useState<string>("");  
 
-  // Get loading and error status from Redux  
+  // Selectors  
   const isLoading = useSelector(selectUserLoading);  
   const error = useSelector(selectUserError);  
-
-  // Data to be sent to the API  
+  
   const data = {  
-    email: valueEmail || "",  
-    password: valuePassword || "",  
-    name: valueName || "", // Include name in the data sent to the API  
-    // confirmPassword is handled on the frontend only  
+    email: valueEmail,  
+    password: valuePassword,  
+    name: valueName,  
   };  
-
-  // Handle form submit  
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {  
     e.preventDefault();  
 
-    // Validate password match  
     if (valuePassword !== valueConfirmPassword) {  
-      toast.error("Passwords do not match!"); // Show error if passwords don't match  
+      toast.error("Passwords do not match!");  
       return;  
     }  
 
-    // Validate terms acceptance  
     if (!acceptedTerms) {  
-      toast.error("You must accept the terms and conditions!"); // Show error if terms are not accepted  
+      toast.error("You must accept the terms and conditions!");  
       return;  
     }  
 
     try {  
-      // Dispatch the registration action with the user data  
       const resultAction = await dispatch(registerUserAPI(data));  
-
       if (registerUserAPI.fulfilled.match(resultAction)) {  
-        // Save user ID in local storage  
-        const userId = resultAction.payload.id; // Assuming response contains id  
-        localStorage.setItem("userId", userId); // Store user ID  
-
-        toast.success("Account created successfully!"); // Show success message  
-        navigate("/sign-in"); // Redirect to the sign-in page  
+        toast.success("Account created successfully!");  
+        navigate("/sign-in");  
       } else {  
-        toast.error(resultAction.payload || "Account creation failed. Please try again."); // Show error message  
+        const errorMessage = resultAction.payload || "Account creation failed. Please try again.";   
+        toast.error(errorMessage);  
       }  
-    } catch (error) {toast.error("An unexpected error occurred during account creation."); // Handle unexpected errors  
+    } catch (error) {  
+      toast.error("An unexpected error occurred during account creation.");  
       console.error(error);  
     }  
   };  
 
   return (  
     <div className="min-h-screen bg-white">  
-      {/* Sign-Up Card */}  
       <div className="container mx-auto px-4 py-6">  
         <div className="mx-auto mt-4 max-w-md">  
           <Card className="border border-gray-200 shadow-lg">  
@@ -78,18 +69,15 @@ export default function SignUpComponent() {
             </CardHeader>  
             <CardContent>  
               <form className="space-y-4" onSubmit={handleSubmit}>  
-                {/* Name Input */}  
                 <div className="space-y-2">  
                   <Input  
                     placeholder="Name"  
                     type="text"  
                     value={valueName}  
-                    onChange={(e) => setValueName(e.target.value)} // Handling name input change  
+                    onChange={(e) => setValueName(e.target.value)}  
                     required  
                   />  
                 </div>  
-
-                {/* Email Input */}  
                 <div className="space-y-2">  
                   <Input  
                     placeholder="Email"  
@@ -99,8 +87,6 @@ export default function SignUpComponent() {
                     required  
                   />  
                 </div>  
-
-                {/* Password Input */}  
                 <div className="space-y-2">  
                   <Input  
                     placeholder="Password"  
@@ -110,8 +96,6 @@ export default function SignUpComponent() {
                     required  
                   />  
                 </div>  
-
-                {/* Confirm Password Input */}  
                 <div className="space-y-2">  
                   <Input  
                     placeholder="Confirm Password"  
@@ -121,8 +105,6 @@ export default function SignUpComponent() {
                     required  
                   />  
                 </div>  
-
-                {/* Terms and Conditions Checkbox */}  
                 <div className="flex items-center justify-between">  
                   <div className="flex items-center space-x-2">  
                     <Checkbox  
@@ -135,19 +117,14 @@ export default function SignUpComponent() {
                     </label>  
                   </div>  
                 </div>  
-
-                {/* Submit Button */}  
-                <Button className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 rounded-md"  
+                <Button  
+                  className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-2 rounded-md"  
                   type="submit"  
                   disabled={isLoading}  
                 >  
                   {isLoading ? "Creating Account..." : "Create Account"}  
                 </Button>  
-
-                {/* Error Message */}  
                 {error && <p className="text-red-500 text-sm text-center">{error}</p>}  
-
-                {/* Login Link */}  
                 <div className="text-center text-sm text-gray-600">  
                   {"Already have an account? "}  
                   <Link className="text-green-500 hover:underline" to="/sign-in">  
