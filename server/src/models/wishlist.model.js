@@ -43,7 +43,14 @@ async function createNew(data) {
   };
   return await db.collection(USER_COLLECTION).insertOne(dataInsert);
 }
+async function deleteWishlist(id) {
+  const db = GET_DB();
+  return await db
+    .collection(USER_COLLECTION)
+    .deleteOne({ productId: new ObjectId(id) });
+}
 module.exports = {
   getAllWishlist,
   createNew,
+  deleteWishlist,
 };
