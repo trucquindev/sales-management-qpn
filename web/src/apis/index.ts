@@ -1,7 +1,7 @@
 import authorizedAxiosInstance from '../untils/authorizeAxios';
 //updateBoard
 export const getAllCategoryAPI = async () => {
-  const response = await authorizedAxiosInstance.get('/api/Category');
+  const response = await authorizedAxiosInstance.get('/category');
   return response.data;
 };
 export const getDetailCategoryAPI = async (id: string | undefined) => {
@@ -9,17 +9,19 @@ export const getDetailCategoryAPI = async (id: string | undefined) => {
   return response.data;
 };
 export const getAllProductAPI = async () => {
-    const response = await authorizedAxiosInstance.get('/api/Product');
-    return response.data;
-  };
-  export const getDetailProductAPI = async (productId:string|undefined) => {
-    const response = await authorizedAxiosInstance.get(`/api/Product/${productId}`);
-    return response.data;
-  };
-  // export const getAllMyWishAPI = async () => {
-  //   const response = await authorizedAxiosInstance.get('/api/Wishlist');
-  //   return response.data;
-  // };
+  const response = await authorizedAxiosInstance.get('/api/Product');
+  return response.data;
+};
+export const getDetailProductAPI = async (productId: string | undefined) => {
+  const response = await authorizedAxiosInstance.get(
+    `/api/Product/${productId}`
+  );
+  return response.data;
+};
+// export const getAllMyWishAPI = async () => {
+//   const response = await authorizedAxiosInstance.get('/api/Wishlist');
+//   return response.data;
+// };
 // export const getDetailProductAPI = async (productId: string | undefined) => {
 //   const response = await authorizedAxiosInstance.get(
 //     `/api/Product/${productId}`
@@ -41,15 +43,11 @@ interface ProductWishlist {
   quantity: number;
   unit: string;
 }
-export const postWishlistAPI = async (data:ProductWishlist) => {
-  const response = await authorizedAxiosInstance.post(
-    `/api/Wishlist`,data
-  );
+export const postWishlistAPI = async (data: ProductWishlist) => {
+  const response = await authorizedAxiosInstance.post(`/api/Wishlist`, data);
   return response.data;
 };
 export const getAllCustomerAPI = async () => {
-  const response = await authorizedAxiosInstance.get(
-    `/api/Customer`
-  );
+  const response = await authorizedAxiosInstance.get(`/api/Customer`);
   return response.data;
 };
