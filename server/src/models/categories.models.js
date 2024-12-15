@@ -24,7 +24,6 @@ async function getAllCategories() {
 
   return xmlData;
 }
-
 module.exports = {
   getAllCategories,
 };
