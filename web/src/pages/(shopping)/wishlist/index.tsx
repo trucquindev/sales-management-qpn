@@ -5,12 +5,15 @@ import { useEffect, useState } from 'react';
 import { getAllWishlistByUserIdAPI } from '@/apis';
 import * as xmljs from 'xml-js';
 interface WishList {
-  id: string;
+  id?: string;
+  productId: string;
   name: string;
-  price: string;
+  price: number;
   image: string;
-  stockStatus: string;
+  quantity: number;
+  stockstt: boolean;
   userId: string;
+  unit: string;
 }
 export default function Component() {
   const [dataWishList, setDataWishList] = useState<WishList[]>([]);
@@ -39,8 +42,6 @@ export default function Component() {
   useEffect(() => {
     fetchDataWishList();
   }, []);
-  console.log(dataWishList);
-
   console.log(dataWishList);
   return (
     <div className="container mx-auto px-4 py-8">
@@ -93,7 +94,7 @@ export default function Component() {
                       </div>
                     </td>
                     <td className="p-4 align-middle">
-                      {!product.stockStatus ? (
+                      {!product.stockstt ? (
                         <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold text-green-500 bg-green-50">
                           In Stock
                         </span>

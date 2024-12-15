@@ -18,10 +18,8 @@ import {
 } from '@/apis/shop/product';
 import { useEffect, useState } from 'react';
 import { getAllWishlistByUserIdAPI, postWishlistAPI } from '@/apis';
-import xmljs from 'xml-js';
 import { toast } from 'react-toastify';
 import * as xmljs from 'xml-js';
-
 interface Product {
   id: string;
   name: string;
@@ -40,6 +38,22 @@ interface WishList {
   userId: string;
   unit: string;
 }
+function jsonToXml(json: any) {
+  let xml = '<item>';
+  for (const key in json) {
+    if (json.hasOwnProperty(key)) {
+      xml += `\n<${key}>`;
+      if (typeof json[key] === 'object') {
+        xml += jsonToXml(json[key]);
+      } else {
+        xml += json[key];
+      }
+      xml += `</${key}>`;
+    }
+  }
+  xml += '</item>';
+  return xml;
+}
 export default function Shop() {
   const [isProduct, setIsProduct] = useState<
     { id: string; name: string; price: number; rating: number; image: string }[]
@@ -56,12 +70,21 @@ export default function Shop() {
     try {
       const response = await getAllWishlistByUserIdAPI(userId);
       const xmlData = response.data; // response.data là chuỗi XML
-      console.log('🚀 ~ fetchData ~ xmlData:', xmlData);
       // console.log('🚀 ~ raw XML data:', xmlData);
 
       // Chuyển đổi XML sang JSON
       const jsonData = xmljs.xml2js(xmlData, { compact: true });
-      console.log('🚀 ~ fetchData ~ jsonData:', jsonData);
+      const wishlists = jsonData.result?.item.map((wishlist: any) => ({
+        name: wishlist.name._text,
+        image: wishlist.image._text,
+        price: wishlist.price._text,
+        id: wishlist.id._text,
+        quantity: wishlist.quantity._text,
+        unit: wishlist.unit._text,
+        stockstt: wishlist.stockstt._text === 'true',
+        userId: wishlist.userId._text,
+      }));
+      setDataWishList(wishlists);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -69,6 +92,7 @@ export default function Shop() {
   useEffect(() => {
     fetchDataWishList();
   }, [isClick]);
+  console.log(dataWishList);
 
   const fetchData = async () => {
     try {
@@ -81,9 +105,8 @@ export default function Shop() {
 
       const jsonData = xmljs.xml2js(xmlData, { compact: true });
 
-
-      const transformData = (data) => {
-        return data.map((item) => ({
+      const transformData = (data: any) => {
+        return data.map((item: any) => ({
           id: item.id._text,
           image: item.image._text,
           name: item.name._text,
@@ -92,8 +115,6 @@ export default function Shop() {
         }));
       };
       const result = transformData(jsonData.result.item);
-
-      console.log('jsonData', result);
 
       setIsProduct(result);
     } catch (error) {
@@ -111,24 +132,26 @@ export default function Shop() {
 
   const handleClickAddCartToWishlist = async (product: Product) => {
     const userId = '67433030077b3eb2ae98bcad';
-    let initData: WishList = {
-      productId: product.id,
-      name: product.name,
-      price: product.price,
-      stockstt: true,
-      userId: userId,
-      image: product.image[0],
-      quantity: 1,
+    let initData = {
+      productId: product.id.toString(),
+      name: product.name.toString(),
+      price: product.price.toString(), // Chuyển sang số thực rồi thành chuỗi
+      stockstt: true.toString(),
+      userId: userId.toString(),
+      image: product.image.toString(),
+      quantity: '1',
       unit: '1kg',
     };
+    console.log(dataWishList);
 
-    const check = dataWishList.find(
-      (data) => data.productId === initData.productId
-    );
+    const check = dataWishList.find((data) => data.name === initData.name);
     if (check) {
       toast.warn('Bạn đã thêm sản phẩm này vào danh sách yêu thích rồi!');
     } else {
-      await postWishlistAPI(initData);
+      // Tạo đối tượng j2xParser
+      const xmlData = `${jsonToXml(initData)}`;
+      console.log(xmlData);
+      await postWishlistAPI(xmlData);
       toast.success('Thêm thành công vào danh sách yêu thích');
     }
     setIsClick(!isClick);
