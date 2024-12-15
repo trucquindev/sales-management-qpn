@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/sheet';
 import { useEffect, useState } from 'react';
 // import image1 from '@/assets/images/imageProducts/image-1.png';
-import { getAllWishlistByUserIdAPI } from '@/apis';
+import { getAllWishlistByUserIdAPI, deleteWishlistAPI } from '@/apis';
 import {
   deleteShoppingCard,
   getShoppingCardCustomer,
@@ -44,6 +44,7 @@ interface CartIdemWishList {
   name: string;
   price: string;
   quantity: string;
+  productId: string;
   unit: string;
   userId: string;
   stockstt: string;
@@ -94,6 +95,7 @@ export default function Component() {
         name: wishlist.name._text,
         image: wishlist.image._text,
         price: wishlist.price._text,
+        productId: wishlist.productId._text,
         id: wishlist.id._text,
         quantity: wishlist.quantity._text,
         unit: wishlist.unit._text,
@@ -113,7 +115,11 @@ export default function Component() {
     };
     fetchData();
   }, []);
-
+  const handleRemoveItemWishlist = async (id: any) => {
+    const initData = `<item><id>${id}</id></item>`;
+    await deleteWishlistAPI(initData);
+    fetchDataWishList();
+  };
   const sumShoppingCard = cartItems
     ? cartItems.reduce((total, item) => {
         return total + +item.quantity;
@@ -258,7 +264,9 @@ export default function Component() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => removeFromCartWishList(item.id)}
+                          onClick={() =>
+                            handleRemoveItemWishlist(item.productId)
+                          }
                         >
                           <X className="h-4 w-4" />
                         </Button>

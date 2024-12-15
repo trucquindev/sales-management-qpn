@@ -6,7 +6,6 @@ import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
-  SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -150,7 +149,7 @@ export default function Shop() {
     } else {
       // Tạo đối tượng j2xParser
       const xmlData = `${jsonToXml(initData)}`;
-      console.log(xmlData);
+      console.log('hello', typeof xmlData);
       await postWishlistAPI(xmlData);
       toast.success('Thêm thành công vào danh sách yêu thích');
     }
