@@ -1,4 +1,5 @@
 const xml2js = require('xml2js');
+import convert from 'xml-js';
 import { shoppingCartService } from '../services/shoppingCart.service';
 
 // Hàm xử lý dữ liệu XML khi nhận từ client và chuyển nó thành JSON
@@ -14,17 +15,10 @@ const parseXMLToJSON = (xml) => {
   });
 };
 
-// Hàm trả về XML khi gửi phản hồi
-const generateXMLResponse = (jsonData) => {
-  const builder = new xml2js.Builder();
-  return builder.buildObject({ shoppingCart: jsonData });
-};
-
 // Controller cho POST thêm sản phẩm vào giỏ hàng
 const addShoppingCartItem = async (req, res) => {
   const xmlData = await req.body;
 
-  console.log(xmlData);
   try {
     const jsonData = await parseXMLToJSON(xmlData); // Chuyển XML thành JSON
 
@@ -45,13 +39,14 @@ const addShoppingCartItem = async (req, res) => {
 // Controller cho GET tất cả giỏ hàng
 const getAllShoppingCarts = async (req, res) => {
   try {
-    const carts = await shoppingCartService.getAllShoppingCarts();
+    const { userId } = req.params;
+    const carts = await shoppingCartService.getAllShoppingCarts(userId);
+    const options = { compact: true, ignoreComment: true, spaces: 4 };
+    const wrappedData = { list: { shoppingCarts: carts } };
+    const data = convert.json2xml(wrappedData, options);
 
-    // Chuyển JSON thành XML và trả về cho frontend
-    const xmlResponse = generateXMLResponse(carts);
-
-    res.header('Content-Type', 'application/xml');
-    res.send(xmlResponse);
+    res.set('Content-Type', 'application/xml');
+    res.status(200).json({ message: 'Get data categories thành công.', data });
   } catch (err) {
     res.status(500).send('Error fetching shopping carts');
   }
@@ -67,7 +62,6 @@ const deleteShoppingCartItem = async (req, res) => {
     res.status(500).send('Error removing product from cart');
   }
 };
-
 
 export const shoppingCartController = {
   getAllShoppingCarts,

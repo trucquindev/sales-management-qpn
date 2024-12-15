@@ -1,8 +1,8 @@
 import { shoppingCartModel } from '../models/shoppingCart.models';
 
-const getAllShoppingCarts = async () => {
+const getAllShoppingCarts = async (userId) => {
   try {
-    return await shoppingCartModel.getAllCarts();
+    return await shoppingCartModel.getAllCarts(userId);
   } catch (err) {
     throw new Error('Error fetching shopping carts');
   }

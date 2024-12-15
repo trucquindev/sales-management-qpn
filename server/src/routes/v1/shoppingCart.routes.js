@@ -3,7 +3,7 @@ const Router = express.Router();
 import { shoppingCartController } from '~/controllers/shoppingCart.controller';
 
 // GET tất cả giỏ hàng
-Router.get('/', shoppingCartController.getAllShoppingCarts);
+Router.get('/:userId', shoppingCartController.getAllShoppingCarts);
 
 // POST thêm sản phẩm vào giỏ hàng
 Router.post('/', shoppingCartController.addShoppingCartItem);
