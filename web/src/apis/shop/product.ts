@@ -10,10 +10,7 @@ export const getAllCategoryAPI = async () => {
   return response.data;
 };
 
-export const postShoppingCard = async (
-  xmlData: any,
-) => {
-
+export const postShoppingCard = async (xmlData: string) => {
   try {
     // Gửi dữ liệu dưới dạng XML qua request POST
     const response = await authorizedAxiosInstance.post(
@@ -30,10 +27,13 @@ export const postShoppingCard = async (
     return error;
   }
 };
+
 export const getShoppingCardCustomer = async (customerId: string) => {
   const response = await authorizedAxiosInstance.get(
-    `/api/ShoppingCard/customer/${customerId}`
+    `/shopping-cart/${customerId}`,
+    { headers: { Accept: 'application/xml' }, responseType: 'text' }
   );
+
   return response.data;
 };
 

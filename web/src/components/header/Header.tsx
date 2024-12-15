@@ -61,12 +61,16 @@ interface Product {
   start: number;
   title: string;
   _Destroy: boolean;
+}interface ProductShoppingCart {
+  name: string;
+  image: string;
+  star: string;
+  price: string;
 }
 
 interface CartItem {
   customerId: string;
-  id: string;
-  product: Product;
+  product: ProductShoppingCart;
   productId: string;
   quantity: number;
 }
@@ -108,8 +112,32 @@ export default function Component() {
   useEffect(() => {
     const fetchData = async () => {
       const rs = await getShoppingCardCustomer('674c1749f333612d17d206fe');
+      const parsedResponse = JSON.parse(rs);
+      const xmlString = parsedResponse.data;
+      const jsonData = await xmljs.xml2js(xmlString, { compact: true });
+
+      const shoppingCartItems = jsonData.list?.shoppingCarts.map(
+        (cartItem: any) => ({
+          customer_id: cartItem.item.customer_id._text,
+          product_id: cartItem.item.product_id._text,
+          quantity: cartItem.item.quantity._text,
+          product: cartItem.item.product
+            ? {
+                image: cartItem.item.product.image._text,
+                name: cartItem.item.product.name._text,
+                price: cartItem.item.product.price._text,
+                star: cartItem.item.product.star._text,
+              }
+            : null, // If product is missing, set it to null
+        })
+      );
+
       // setIsShoppingCard(rs);
-      setCartItems(rs);
+      // setCartItems(rs);
+      // const jsonResult = xmljs.xml2js(rs, { compact: true });
+      console.log('test', shoppingCartItems);
+      // console.log('hello', jsonData.list.shoppingCarts[0].item.product.name._text); 
+      setCartItems(shoppingCartItems);
     };
     fetchData();
   }, []);
@@ -286,7 +314,7 @@ export default function Component() {
               </Sheet>
             </div>
             <div className="flex items-center gap-2">
-              {(
+              {
                 <Sheet>
                   <SheetTrigger asChild>
                     <Button variant="ghost" size="icon" className="relative">
@@ -302,9 +330,12 @@ export default function Component() {
                     </SheetHeader>
                     <div className="mt-8 flex flex-col gap-4">
                       {cartItems?.map((item) => (
-                        <div key={item.id} className="flex items-center gap-4">
+                        <div
+                          key={item.productId}
+                          className="flex items-center gap-4"
+                        >
                           <img
-                            src={`/images/imageProducts/${item.product.image[0]}`}
+                            src={`/images/imageProducts/${item.product.image}`}
                             alt={item.product.name}
                             width={60}
                             height={60}
@@ -314,13 +345,17 @@ export default function Component() {
                             <h3 className="font-medium">{item.product.name}</h3>
                             <p className="text-sm text-muted-foreground">
                               {+item.quantity} × $
-                              {+item.product.price.toFixed(2)}
+                              {
+                                +Number.parseFloat(item.product.price).toFixed(
+                                  2
+                                )
+                              }
                             </p>
                           </div>
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => removeFromCartShoping(item.id)}
+                            onClick={() => removeFromCartShoping(item.productId)}
                           >
                             <X className="h-4 w-4" />
                           </Button>
@@ -346,7 +381,7 @@ export default function Component() {
                     </div>
                   </SheetContent>
                 </Sheet>
-              )}
+              }
               <div className="flex flex-col">
                 {isAuthenticated && (
                   <div>

@@ -126,29 +126,25 @@ export default function Shop() {
     fetchData();
   }, []);
 
- const handleClickAddCart = async (id: string) => {
-   const productId = id;
-   const customerId = '674c1749f333612d17d206fe'; // Lấy từ thông tin đăng nhập người dùng
+  const handleClickAddCart = async (id: string) => {
+    const productId = id;
+    const customerId = '67433030077b3eb2ae98bcad'; // Lấy từ thông tin đăng nhập người dùng
 
-   const jsonData = {
-     Cart: {
-       Product: {
-         ProductId: productId.toString(),
-       },
-       Customer: {
-         CustomerId: customerId.toString(),
-       },
-     },
-   };
+    const jsonData = {
+      shoppingCart: {
+        product_id: productId.toString(),
+        customer_id: customerId.toString(),
+      },
+    };
 
-   const xmlOptions = { compact: true, ignoreComment: true, spaces: 2 };
-   const xmlData = js2xml(jsonData, xmlOptions);
+    const xmlOptions = { compact: true, ignoreComment: true, spaces: 2 };
+    const xmlData = xmljs.js2xml(jsonData, xmlOptions);
 
-   console.log('Generated XML:', xmlData); // Kiểm tra XML được tạo
+    console.log('Generated XML:', xmlData);
 
-   // Gửi dữ liệu XML tới API
-   await postShoppingCard(xmlData);
- };
+    // Gửi dữ liệu XML tới API
+    await postShoppingCard(xmlData);
+  };
 
   const handleClickAddCartToWishlist = async (product: Product) => {
     const userId = '67433030077b3eb2ae98bcad';
