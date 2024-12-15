@@ -3,11 +3,25 @@ const {
   loginUser,
   updateUser,
 } = require('../services/user.service');
+const xml2js = require('xml2js');
 
+const xmlToJson = (xml) => {
+  return new Promise((resolve, reject) => {
+    xml2js.parseString(xml, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    });
+  });
+};
 async function signUp(req, res) {
   try {
-    console.log('🚀 ~ signUp ~ req.body:', req.body);
-    const user = await registerUser(req.body);
+    const jsonData = await xmlToJson(req.body);
+    const initData = {
+      name: jsonData.item.name[0],
+      password: jsonData.item.password[0],
+      email: jsonData.item.email[0],
+    };
+    const user = await registerUser(initData);
 
     res.status(201).json({ message: 'User registered successfully.', user });
   } catch (error) {
@@ -17,7 +31,12 @@ async function signUp(req, res) {
 
 async function signIn(req, res) {
   try {
-    const { email, password } = req.body;
+    const jsonData = await xmlToJson(req.body);
+    const initData = {
+      password: jsonData.item.password[0],
+      email: jsonData.item.email[0],
+    };
+    const { email, password } = initData;
     const user = await loginUser(email, password);
     res.status(200).json({ message: 'Login successful.', user });
   } catch (error) {
