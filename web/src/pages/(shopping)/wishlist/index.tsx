@@ -3,29 +3,45 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { getAllWishlistByUserIdAPI } from '@/apis';
+import * as xmljs from 'xml-js';
 interface WishList {
   id: string;
-  name:string;
-  price:string;
-  image:string;
-  stockStatus:boolean;
-  userId:string;
+  name: string;
+  price: string;
+  image: string;
+  stockStatus: string;
+  userId: string;
 }
 export default function Component() {
-  const [dataWishList, setDataWishList] = useState<WishList[]>([])
-  const userId = '67433030077b3eb2ae98bcad'
-  const fetchDataWishList = async () =>{
+  const [dataWishList, setDataWishList] = useState<WishList[]>([]);
+  const userId = '67433030077b3eb2ae98bcad';
+  const fetchDataWishList = async () => {
     try {
-      const response = await getAllWishlistByUserIdAPI(userId)
-      console.log('response~wishlist ',response)
-      setDataWishList(response)
+      const response = await getAllWishlistByUserIdAPI(userId);
+      const xmlData = response.data; // response.data là chuỗi XML
+      // Chuyển đổi XML sang JSON
+      const jsonData = xmljs.xml2js(xmlData, { compact: true });
+
+      let wishlists = jsonData.result?.item.map((wishlist: any) => ({
+        name: wishlist.name._text,
+        image: wishlist.image._text,
+        price: wishlist.price._text,
+        id: wishlist.id._text,
+        stockstt: wishlist.stockstt._text === 'true',
+        userId: wishlist.userId._text,
+      }));
+      setDataWishList(wishlists);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
-  }
-  useEffect(()=>{
-    fetchDataWishList()
-  },[])
+  };
+
+  useEffect(() => {
+    fetchDataWishList();
+  }, []);
+  console.log(dataWishList);
+
+  console.log(dataWishList);
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold text-center mb-8">My Wishlist</h1>
@@ -68,12 +84,10 @@ export default function Component() {
                     </td>
                     <td className="p-4 align-middle">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium">
-                          ${product.price}
-                        </span>
+                        <span className="font-medium">${product.price}</span>
                         {product.price && (
                           <span className="text-sm text-muted-foreground line-through">
-                            ${+product.price*2}
+                            ${+product.price * 2}
                           </span>
                         )}
                       </div>
