@@ -109,8 +109,8 @@ export default function Shop() {
           id: item.id._text,
           image: item.image._text,
           name: item.name._text,
-          price: parseFloat(item.price._text),
-          star: parseInt(item.star._text, 10),
+          price: Number.parseFloat(item.price._text),
+          star: Number.parseInt(item.star._text, 10),
         }));
       };
       const result = transformData(jsonData.result.item);
@@ -126,7 +126,23 @@ export default function Shop() {
   }, []);
 
   const handleClickAddCart = async (id: string) => {
-    await postShoppingCard('674c1749f333612d17d206fe', id);
+    const productId = id;
+    const customerId = '67433030077b3eb2ae98bcad'; // Lấy từ thông tin đăng nhập người dùng
+
+    const jsonData = {
+      shoppingCart: {
+        product_id: productId.toString(),
+        customer_id: customerId.toString(),
+      },
+    };
+
+    const xmlOptions = { compact: true, ignoreComment: true, spaces: 2 };
+    const xmlData = xmljs.js2xml(jsonData, xmlOptions);
+
+    console.log('Generated XML:', xmlData);
+
+    // Gửi dữ liệu XML tới API
+    await postShoppingCard(xmlData);
   };
 
   const handleClickAddCartToWishlist = async (product: Product) => {
