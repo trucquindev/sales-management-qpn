@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
 import { getAllWishlistByUserIdAPI, deleteWishlistAPI } from '@/apis';
 import * as xmljs from 'xml-js';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '@/redux/user/userSlice';
 interface WishList {
   id?: string;
   productId: string;
@@ -17,7 +19,8 @@ interface WishList {
 }
 export default function Component() {
   const [dataWishList, setDataWishList] = useState<WishList[]>([]);
-  const userId = '67433030077b3eb2ae98bcad';
+  const user = useSelector(selectCurrentUser);
+  const userId = user?._id;
   const fetchDataWishList = async () => {
     try {
       const response = await getAllWishlistByUserIdAPI(userId);
@@ -99,7 +102,7 @@ export default function Component() {
                       </div>
                     </td>
                     <td className="p-4 align-middle">
-                      {!product.stockstt ? (
+                      {product.stockstt ? (
                         <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold text-green-500 bg-green-50">
                           In Stock
                         </span>

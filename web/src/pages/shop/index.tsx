@@ -19,6 +19,8 @@ import { useEffect, useState } from 'react';
 import { getAllWishlistByUserIdAPI, postWishlistAPI } from '@/apis';
 import { toast } from 'react-toastify';
 import * as xmljs from 'xml-js';
+import { useSelector } from 'react-redux';
+import { selectCurrentUser } from '@/redux/user/userSlice';
 interface Product {
   id: string;
   name: string;
@@ -63,7 +65,8 @@ export default function Shop() {
 
   const navigate = useNavigate();
   const [dataWishList, setDataWishList] = useState<WishList[]>([]);
-  const userId = '67433030077b3eb2ae98bcad';
+  const user = useSelector(selectCurrentUser);
+  const userId = user?._id; // replace with actual user ID
   const [isClick, setIsClick] = useState(false);
   const fetchDataWishList = async () => {
     try {
@@ -127,12 +130,12 @@ export default function Shop() {
 
   const handleClickAddCart = async (id: string) => {
     const productId = id;
-    const customerId = '67433030077b3eb2ae98bcad'; // Lấy từ thông tin đăng nhập người dùng
+    const customerId = userId; // Lấy từ thông tin đăng nhập người dùng
 
     const jsonData = {
       shoppingCart: {
         product_id: productId.toString(),
-        customer_id: customerId.toString(),
+        customer_id: customerId!.toString(),
       },
     };
 
@@ -146,13 +149,13 @@ export default function Shop() {
   };
 
   const handleClickAddCartToWishlist = async (product: Product) => {
-    const userId = '67433030077b3eb2ae98bcad';
+    const userId = user?._id;
     let initData = {
       productId: product.id.toString(),
       name: product.name.toString(),
       price: product.price.toString(), // Chuyển sang số thực rồi thành chuỗi
       stockstt: true.toString(),
-      userId: userId.toString(),
+      userId: userId!.toString(),
       image: product.image.toString(),
       quantity: '1',
       unit: '1kg',

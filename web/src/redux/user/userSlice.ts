@@ -3,7 +3,7 @@ import authorizedAxiosInstance from '@/untils/authorizeAxios'; // Ensure the pat
 
 // 1. Define User data type
 interface User {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   address: string;
@@ -56,7 +56,6 @@ export const loginUserAPI = createAsyncThunk<
       password: data.password.toString(),
     };
     const xmlData = `${jsonToXml(initData)}`;
-    console.log('🚀 ~ > ~ xmlData:', xmlData);
     const response = await authorizedAxiosInstance.post(
       '/user/signin',
       xmlData,

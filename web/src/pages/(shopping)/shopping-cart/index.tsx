@@ -3,7 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { deleteShoppingCard, getShoppingCardCustomer, updateShoppingCard } from '@/apis/shop/product';
+import {
+  deleteShoppingCard,
+  getShoppingCardCustomer,
+  updateShoppingCard,
+} from '@/apis/shop/product';
 
 interface Product {
   categoryId: string;
@@ -31,7 +35,6 @@ export default function Component() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [cartItems, setCartItems] = useState<CartItem[] | null>(null);
 
-
   useEffect(() => {
     const fetchData = async () => {
       const rs = await getShoppingCardCustomer('674c1749f333612d17d206fe');
@@ -39,16 +42,23 @@ export default function Component() {
       setCartItems(items || []);
     };
     fetchData();
-  }, [items]);  
+  }, [items]);
 
-
-  const updateQuantity = async (item: {
-    id: string;
-    quantity: number;
-    productID: string;
-    customerId: string;
-  }, num: number) => {
-    await updateShoppingCard(item.id, item.quantity + num, item.productID, item.customerId);
+  const updateQuantity = async (
+    item: {
+      id: string;
+      quantity: number;
+      productID: string;
+      customerId: string;
+    },
+    num: number
+  ) => {
+    await updateShoppingCard(
+      item.id,
+      item.quantity + num,
+      item.productID,
+      item.customerId
+    );
   };
 
   const removeItem = async (id: string) => {
@@ -58,10 +68,7 @@ export default function Component() {
     await deleteShoppingCard(id);
   };
 
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
-    0
-  );
+  const subtotal = 0;
   const navigate = useNavigate();
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -76,7 +83,7 @@ export default function Component() {
               <div>SUBTOTAL</div>
             </div>
 
-            {items.map((item) => (
+            {items?.map((item) => (
               <div
                 key={item.id}
                 className="grid grid-cols-4 gap-4 items-center pb-4"
@@ -93,13 +100,16 @@ export default function Component() {
                     <h3 className="font-medium">{item.product.name}</h3>
                     <p className="text-sm text-muted-foreground">
                       ${item.product.price.toFixed(2)}
-                    </p></div>
+                    </p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => updateQuantity({ ...item, productID: item.productId }, -1)}
+                    onClick={() =>
+                      updateQuantity({ ...item, productID: item.productId }, -1)
+                    }
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
@@ -119,7 +129,9 @@ export default function Component() {
                   <Button
                     variant="outline"
                     size="icon"
-                    onClick={() => updateQuantity({ ...item, productID: item.productId }, 1)}
+                    onClick={() =>
+                      updateQuantity({ ...item, productID: item.productId }, 1)
+                    }
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
@@ -172,7 +184,8 @@ export default function Component() {
             >
               Proceed to checkout
             </Button>
-          </div></div>
+          </div>
+        </div>
       </div>
     </div>
   );
