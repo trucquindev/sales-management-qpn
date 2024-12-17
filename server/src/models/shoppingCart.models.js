@@ -81,7 +81,7 @@ const getAllCarts = async (userId) => {
 const deleteCartItem = async (id) => {
   await GET_DB()
     .collection(SHOPPPING_CART_COLLECTION_NAME)
-    .deleteOne({ _id: ObjectId(id) });
+    .deleteOne({ _id: new ObjectId(id) });
 };
 
 export const shoppingCartModel = {
