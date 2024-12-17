@@ -70,6 +70,7 @@ interface Product {
 }
 
 interface CartItem {
+  id: string;
   customerId: string;
   product: ProductShoppingCart;
   productId: string;
@@ -81,7 +82,7 @@ export default function Component() {
 
   const [cartItems, setCartItems] = useState<CartItem[] | null>(null);
   const totalShoping = cartItems?.reduce(
-    (sum, item) => sum + item.product.price * item.quantity,
+    (sum, item) => sum + Number(item.product.price) * item.quantity,
     0
   );
 
@@ -113,13 +114,14 @@ export default function Component() {
   };
   useEffect(() => {
     const fetchData = async () => {
-      const rs = await getShoppingCardCustomer('674c1749f333612d17d206fe');
+      const rs = await getShoppingCardCustomer('67433030077b3eb2ae98bcad');
       const parsedResponse = JSON.parse(rs);
       const xmlString = parsedResponse.data;
       const jsonData = await xmljs.xml2js(xmlString, { compact: true });
 
       const shoppingCartItems = jsonData.list?.shoppingCarts.map(
         (cartItem: any) => ({
+          _id: cartItem.item._id._text,
           customer_id: cartItem.item.customer_id._text,
           product_id: cartItem.item.product_id._text,
           quantity: cartItem.item.quantity._text,
@@ -133,12 +135,7 @@ export default function Component() {
             : null, // If product is missing, set it to null
         })
       );
-
-      // setIsShoppingCard(rs);
-      // setCartItems(rs);
-      // const jsonResult = xmljs.xml2js(rs, { compact: true });
       console.log('test', shoppingCartItems);
-      // console.log('hello', jsonData.list.shoppingCarts[0].item.product.name._text); 
       setCartItems(shoppingCartItems);
     };
     fetchData();
@@ -339,7 +336,7 @@ export default function Component() {
                     <div className="mt-8 flex flex-col gap-4">
                       {cartItems?.map((item) => (
                         <div
-                          key={item.productId}
+                          key={item.id}
                           className="flex items-center gap-4"
                         >
                           <img
@@ -363,7 +360,7 @@ export default function Component() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            onClick={() => removeFromCartShoping(item.productId)}
+                            onClick={() => removeFromCartShoping(item._id)}
                           >
                             <X className="h-4 w-4" />
                           </Button>

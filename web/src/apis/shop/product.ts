@@ -38,7 +38,7 @@ export const getShoppingCardCustomer = async (customerId: string) => {
 };
 
 export const deleteShoppingCard = async (id: string) => {
-  await authorizedAxiosInstance.delete(`/api/ShoppingCard/${id}`);
+  await authorizedAxiosInstance.delete(`/shopping-cart/${id}`);
 };
 export const updateShoppingCard = async (
   id: string,
