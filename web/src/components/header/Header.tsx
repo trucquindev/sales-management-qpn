@@ -62,7 +62,8 @@ interface Product {
   start: number;
   title: string;
   _Destroy: boolean;
-}interface ProductShoppingCart {
+}
+interface ProductShoppingCart {
   name: string;
   image: string;
   star: string;
@@ -85,8 +86,8 @@ export default function Component() {
     (sum, item) => sum + Number(item.product.price) * item.quantity,
     0
   );
-
-  const userId = '67433030077b3eb2ae98bcad'; // replace with actual user ID
+  const user = useSelector(selectCurrentUser);
+  const userId = user?._id; // replace with actual user ID
   const fetchDataWishList = async () => {
     try {
       const response = await getAllWishlistByUserIdAPI(userId);
@@ -114,7 +115,7 @@ export default function Component() {
   };
   useEffect(() => {
     const fetchData = async () => {
-      const rs = await getShoppingCardCustomer('67433030077b3eb2ae98bcad');
+      const rs = await getShoppingCardCustomer(userId!);
       const parsedResponse = JSON.parse(rs);
       const xmlString = parsedResponse.data;
       const jsonData = await xmljs.xml2js(xmlString, { compact: true });
@@ -162,10 +163,6 @@ export default function Component() {
       setCartItems(cartItems.filter((item) => item.id !== id));
     }
     await deleteShoppingCard(id);
-  };
-
-  const removeFromCartWishList = (id: string) => {
-    setDataWishList(dataWishList.filter((item) => item.id !== id));
   };
 
   const dispatch = useDispatch();
@@ -335,10 +332,7 @@ export default function Component() {
                     </SheetHeader>
                     <div className="mt-8 flex flex-col gap-4">
                       {cartItems?.map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex items-center gap-4"
-                        >
+                        <div key={item.id} className="flex items-center gap-4">
                           <img
                             src={`/images/imageProducts/${item.product.image}`}
                             alt={item.product.name}
